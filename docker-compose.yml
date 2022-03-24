@@ -8,3 +8,5 @@ services:
     volumes:
       - .:/project
     working_dir: /project
+    env_file:
+      - aws-credentials.env
