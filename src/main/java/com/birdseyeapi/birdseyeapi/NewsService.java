@@ -25,7 +25,7 @@ public class NewsService {
     private S3Manager s3Manager;
     private final String BUCKET_NAME = "birds-eye-news";
 
-    public Map<String, List<News>> getTodayNews() throws IOException {
+    public List<NewsGroup> getTodayNews() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         String prefix = now.format(DateTimeFormatter.ISO_LOCAL_DATE);
         List<S3Object> s3Objects = s3Manager.listObjects(BUCKET_NAME, prefix);
@@ -40,8 +40,13 @@ public class NewsService {
             newsList.add(news);
         }
 
-        Map<String, List<News>> newsGroup = newsList.stream()
+        Map<String, List<News>> group = newsList.stream()
             .collect(Collectors.groupingBy(news -> news.sourceBy));
+        List<NewsGroup> newsGroup = new ArrayList<NewsGroup>();
+        for (String key : group.keySet()) {
+            List<News> list = group.get(key);
+            newsGroup.add(new NewsGroup(key, list.get(0).scrapedUrl, list));
+        }
 
         return newsGroup;
     }

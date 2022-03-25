@@ -5,4 +5,7 @@ public class News {
     public String title;
     public String description;
     public String sourceBy;
+    public String scrapedUrl;
+    public String scrapedDateTime;
+    public String articleUrl;
 }

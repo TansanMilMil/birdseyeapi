@@ -18,8 +18,8 @@ public class NewsController {
     private NewsService newsService;
     
     @GetMapping("/today-news")
-    public Map<String, List<News>> getTodayNews() throws IOException {
-        Map<String, List<News>> newsList = newsService.getTodayNews();
+    public List<NewsGroup> getTodayNews() throws IOException {
+        List<NewsGroup> newsList = newsService.getTodayNews();
         return newsList;
     }
 }
