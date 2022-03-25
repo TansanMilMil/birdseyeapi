@@ -20,7 +20,9 @@ public class BirdseyeapiApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry
 					.addMapping("/**")
-					.allowedOrigins("localhost:8080", "https://birds-eye.ts-soda.net/");
+					.allowedOrigins(
+						"localhost:3000", 
+						"https://birds-eye.ts-soda.net/");
 			}
 		};
 	}
