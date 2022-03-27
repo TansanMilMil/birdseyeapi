@@ -8,4 +8,5 @@ public class News {
     public String scrapedUrl;
     public String scrapedDateTime;
     public String articleUrl;
+    public String articleImageUrl;
 }

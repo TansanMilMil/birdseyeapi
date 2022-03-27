@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class NewsService {
     private S3Manager s3Manager;
     private final String BUCKET_NAME = "birds-eye-news";
 
-    public List<NewsGroup> getTodayNews() throws IOException {
+    public List<News> getTodayNews() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         String prefix = now.format(DateTimeFormatter.ISO_LOCAL_DATE);
         List<S3Object> s3Objects = s3Manager.listObjects(BUCKET_NAME, prefix);
@@ -40,14 +41,8 @@ public class NewsService {
             newsList.add(news);
         }
 
-        Map<String, List<News>> group = newsList.stream()
-            .collect(Collectors.groupingBy(news -> news.sourceBy));
-        List<NewsGroup> newsGroup = new ArrayList<NewsGroup>();
-        for (String key : group.keySet()) {
-            List<News> list = group.get(key);
-            newsGroup.add(new NewsGroup(key, list.get(0).scrapedUrl, list));
-        }
+        Collections.shuffle(newsList);
 
-        return newsGroup;
+        return newsList;
     }
 }
