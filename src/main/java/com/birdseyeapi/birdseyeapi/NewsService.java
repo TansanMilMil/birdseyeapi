@@ -5,10 +5,12 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.birdseyeapi.birdseyeapi.AwsS3.S3Manager;
@@ -30,18 +32,20 @@ public class NewsService {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         String prefix = now.format(DateTimeFormatter.ISO_LOCAL_DATE);
         List<S3Object> s3Objects = s3Manager.listObjects(BUCKET_NAME, prefix);
+        List<Integer> targetIndexes = new ArrayList<Integer>();
+        for (int i = 0; i < s3Objects.size(); i++) {
+            targetIndexes.add(i);
+        }
+        Collections.shuffle(targetIndexes);
+        targetIndexes = targetIndexes.subList(0, 19);
 
         List<News> newsList = new ArrayList<News>();
-        for (ListIterator<S3Object> iterVals = s3Objects.listIterator(); iterVals.hasNext(); ) {
-            S3Object s3Object = (S3Object) iterVals.next();
+        for (Integer targetIndex : targetIndexes) {
+            String json = s3Manager.getJsonObject(BUCKET_NAME, s3Objects.get(targetIndex).key());
             ObjectMapper mapper = new ObjectMapper();
-
-            String json = s3Manager.getJsonObject(BUCKET_NAME, s3Object.key());
             News news = mapper.readValue(json, News.class);
             newsList.add(news);
         }
-
-        Collections.shuffle(newsList);
 
         return newsList;
     }
