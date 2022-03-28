@@ -22,7 +22,6 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-
 import org.jdom2.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,11 +67,20 @@ public class NewsService {
         List<News> newsList = new ArrayList<News>();
         for (SyndEntry entry : feed.getEntries()) {
             String description = null;
+            String articleUrl = null;
             String articleImageUrl = null;
             for (Element element : entry.getForeignMarkup()) {
                 System.out.print(element.getName() + ": " + element.getValue() + "\n");
                 if (element.getName() == "news_item") {
-                    description = element.getValue();
+                    for (Element childElement : element.getChildren()) {
+                        if (childElement.getName() == "news_item_snippet") {
+                            description = childElement.getValue();
+                        }
+                        if (childElement.getName() == "news_item_url") {
+                            articleUrl = childElement.getValue();
+                        }
+                    }
+                    
                 }
                 if (element.getName() == "picture") {
                     articleImageUrl = element.getValue();
@@ -84,9 +92,9 @@ public class NewsService {
             news.title = entry.getTitle();
             news.description = description;
             news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = GOOGLE_RSS_TRENDS_DAILY;
+            news.scrapedUrl = entry.getLink();
             news.scrapedDateTime = nowString;
-            news.articleUrl = entry.getLink();
+            news.articleUrl = articleUrl;
             news.articleImageUrl = articleImageUrl;          
             newsList.add(news);
         }
