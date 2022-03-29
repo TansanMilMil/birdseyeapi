@@ -16,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import com.birdseyeapi.birdseyeapi.AwsS3.S3Manager;
+import com.birdseyeapi.birdseyeapi.SiteScraping.SiteScraping;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -87,17 +88,23 @@ public class NewsService {
                 }
                 
             }
-            var news = new News();
-            news.id = 0;
-            news.title = entry.getTitle();
-            news.description = description;
-            news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = entry.getLink();
-            news.scrapedDateTime = nowString;
-            news.articleUrl = articleUrl;
-            news.articleImageUrl = articleImageUrl;          
+            var news = new News(
+                0,
+                entry.getTitle(),
+                description,
+                SOURCE_BY,
+                entry.getLink(),
+                nowString,
+                articleUrl,
+                articleImageUrl
+            );
             newsList.add(news);
         }
         return newsList;
+    }
+
+    public boolean scrape() throws IOException {
+        List<News> newsList = SiteScraping.scrape();
+        return true;
     }
 }
