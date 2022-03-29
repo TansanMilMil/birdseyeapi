@@ -32,15 +32,20 @@ public class ScrapeZDNet implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#page-wrap > div.pg-container-main > main > section:nth-child(1) > div > ul > li");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             String href = SOURCE_URL + newsArea.select("a").attr("href");
             String newsTitle = newsArea.select("a > div.txt > p.txt-ttl").text();
             Elements newsImage = newsArea.select("a > div.thumb > img");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            newsList.add(new News(id, newsTitle, null, SOURCE_BY, SOURCE_URL, nowString, href, SOURCE_URL + newsImage.attr("src")));
+            News news = new News();
+            news.title = newsTitle;
+            news.description = null;
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = href;
+            news.articleImageUrl = newsImage.attr("src");
+            newsList.add(news);
         }
 
         return newsList;

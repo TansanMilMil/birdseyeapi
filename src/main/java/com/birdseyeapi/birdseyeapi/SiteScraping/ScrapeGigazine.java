@@ -32,13 +32,10 @@ public class ScrapeGigazine implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#section > div > section > div.card");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             Elements newsTitle = newsArea.select("h2 > a");
             Elements newsImage = newsArea.select("div.thumb > a > img");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             String linkHref = newsTitle.attr("href");
             String description = null;
             if (linkHref != null) {
@@ -51,8 +48,15 @@ public class ScrapeGigazine implements ScrapingBase {
                     }                    
                 }
             }
-
-            newsList.add(new News(id, newsTitle.text(), description, SOURCE_BY, SOURCE_URL, nowString, linkHref, newsImage.attr("src")));
+            News news = new News();
+            news.title = newsTitle.text();
+            news.description = description;
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = linkHref;
+            news.articleImageUrl = newsImage.attr("src");
+            newsList.add(news);
         }
 
         return newsList;

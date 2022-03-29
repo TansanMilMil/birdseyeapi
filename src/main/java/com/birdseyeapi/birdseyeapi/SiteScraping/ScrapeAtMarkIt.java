@@ -32,16 +32,21 @@ public class ScrapeAtMarkIt implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#subtopContents > div:nth-child(3) > div > div.colBoxInner > div");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             Elements newsTitle = newsArea.select("div.colBoxTitle > h3");
             Elements newsDescription = newsArea.select("div.colBoxDescription > p");
             Elements newsImage = newsArea.select("div.colBoxIcon > a > img");
 
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            newsList.add(new News(id, newsTitle.text(), newsDescription.text(), SOURCE_BY, SOURCE_URL, nowString, newsTitle.select("a").attr("href"), newsImage.attr("src")));
+            News news = new News();
+            news.title = newsTitle.text();
+            news.description = newsDescription.text();
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = newsTitle.select("a").attr("href");
+            news.articleImageUrl = newsImage.attr("src");
+            newsList.add(news);            
         }
 
         return newsList;

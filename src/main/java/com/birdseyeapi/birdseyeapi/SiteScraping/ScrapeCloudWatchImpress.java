@@ -32,13 +32,18 @@ public class ScrapeCloudWatchImpress implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#main > article > aside.top-news.topics > div > ul > li.item.news");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             Elements newsTitle = newsArea.select("div.body > div.text > p.title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            newsList.add(new News(id, newsTitle.text(), null, SOURCE_BY, SOURCE_URL, nowString, newsTitle.attr("href"), null));
+            News news = new News();
+            news.title = newsTitle.text();
+            news.description = null;
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = newsTitle.attr("href");
+            news.articleImageUrl = null;
+            newsList.add(news);
         }
 
         return newsList;

@@ -32,14 +32,19 @@ public class ScrapeSrad implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#firehoselist > article");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             Elements newsTitle = newsArea.select("header > h2.story > span[id^=\"title\"] > a");
             Elements newsDescription = newsArea.select("div.body > div");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-            newsList.add(new News(id, newsTitle.text(), newsDescription.html(), SOURCE_BY, SOURCE_URL, nowString, newsTitle.attr("href"), null));
+            News news = new News();
+            news.title = newsTitle.text();
+            news.description = newsDescription.html();
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = newsTitle.attr("href");
+            news.articleImageUrl = null;
+            newsList.add(news);
         }
 
         return newsList;

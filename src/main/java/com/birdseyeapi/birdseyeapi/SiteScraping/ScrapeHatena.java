@@ -32,12 +32,9 @@ public class ScrapeHatena implements ScrapingBase {
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc.select("#container > div.wrapper > div > div.entrylist-main > section > ul > li");
-        int id = 0;
         for (Element newsArea : newsAreaList) {
-            id++;
             Elements newsTitle = newsArea.select("div > div.entrylist-contents-main > h3 > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-            String nowString = now.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
             String linkHref = newsTitle.attr("href");
             String description = null;
             if (linkHref != null) {
@@ -49,8 +46,16 @@ public class ScrapeHatena implements ScrapingBase {
                         description = content;
                     }                    
                 }
-            }            
-            newsList.add(new News(id, newsTitle.text(), description, SOURCE_BY, SOURCE_URL, nowString, linkHref, null));                    
+            }
+            News news = new News();
+            news.title = newsTitle.text();
+            news.description = description;
+            news.sourceBy = SOURCE_BY;
+            news.scrapedUrl = SOURCE_URL;
+            news.scrapedDateTime = now;
+            news.articleUrl = linkHref;
+            news.articleImageUrl = null;
+            newsList.add(news);            
         }
 
         return newsList;
