@@ -44,7 +44,7 @@ public class ScrapeZDNet implements ScrapingBase {
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
             news.articleUrl = href;
-            news.articleImageUrl = newsImage.attr("src");
+            news.articleImageUrl = SOURCE_URL + newsImage.attr("src");
             newsList.add(news);
         }
 
