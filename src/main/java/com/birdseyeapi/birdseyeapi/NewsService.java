@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import javax.transaction.Transactional;
+
 import com.birdseyeapi.birdseyeapi.SiteScraping.SiteScraping;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -28,7 +31,6 @@ public class NewsService {
     public List<News> getTodayNews() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
-        System.out.println(today.toString());
         List<News> newsList = newsRepostiroy.findByscrapedDateTimeGreaterThanEqual(today);
         Collections.shuffle(newsList);
         return newsList;
@@ -75,7 +77,12 @@ public class NewsService {
         return newsList;
     }
 
+    @Transactional
     public boolean scrape() throws IOException {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
+        newsRepostiroy.deleteByscrapedDateTimeGreaterThanEqual(today);
+
         List<News> newsList = SiteScraping.scrape();
         newsRepostiroy.saveAll(newsList);
         return true;
