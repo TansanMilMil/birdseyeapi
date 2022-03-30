@@ -6,8 +6,7 @@ echo -e '\e[32mstart build...\e[m'
 
 echo -e '\e[32mcopy files to ec2...\e[m'
 scp -pr ./build wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi/ && \
-scp -p ./docker-compose.yml wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi && \
-scp -p ./docker-compose-prod.yml wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi && \
+scp -p ./docker-compose-prod.yml wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi/docker-compose.yml && \
 scp -p ./entrypoint.sh wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi && \
 ssh wp-kimagure chmod 777 /home/ec2-user/birds-eye/birdseyeapi/entrypoint.sh && \
 scp -p ./Dockerfile wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi && \
