@@ -3,13 +3,10 @@ package com.birdseyeapi.birdseyeapi;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
-
 import com.rometools.rome.io.FeedException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,16 +29,17 @@ public class NewsController {
         List<News> newsList = newsService.getTrends();
         return newsList;
     }
+    
+    @GetMapping("/news-reactions")
+    public List<NewsReaction> getNewsReactions(@RequestParam long id) throws IOException, InterruptedException, InterruptedException {
+        List<NewsReaction> reactions = newsService.getNewsReactions(id);
+        return reactions;        
+    }
 
     @PostMapping("/scrape")
-    public boolean scrape() throws IOException {
+    public boolean scrape() throws IOException, InterruptedException {
         newsService.scrape();
+        newsService.scrapeNewsReactions();
         return true;
-    }
-    
-    @PostMapping("/scrape-ref")
-    public List<NewsReaction> scrapeRef(@RequestBody ScrapeRefRequest body) throws IOException, InterruptedException {
-        List<NewsReaction> reactions = newsService.scrapeRef(body.id);
-        return reactions;
     }
 }

@@ -22,7 +22,10 @@ import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.Random;
 import org.jdom2.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,6 +90,23 @@ public class NewsService {
         return newsList;
     }
 
+    public List<NewsReaction> getNewsReactions(long id) throws IOException, InterruptedException {
+        List<News> result = em.createQuery("""
+                SELECT n
+                FROM News n 
+                LEFT JOIN FETCH n.reactions
+                WHERE n.id = :id
+            """, News.class)
+            .setParameter("id", id)
+            .getResultList();
+        if (result.size() == 0) {
+            LOG.info("no news!");
+            return new ArrayList<NewsReaction>();
+        } else {
+            return result.get(0).reactions;
+        }
+    }
+    
     @Transactional
     public boolean scrape() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
@@ -99,25 +119,29 @@ public class NewsService {
     }
     
     @Transactional
-    public List<NewsReaction> scrapeRef(long id) throws IOException, InterruptedException {
-        List<News> result = em.createQuery("""
+    public boolean scrapeNewsReactions() throws InterruptedException, MalformedURLException {
+        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
+        ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
+        List<News> newsList = em.createQuery("""
                 SELECT n
                 FROM News n 
                 LEFT JOIN FETCH n.reactions
-                WHERE n.id = :id
+                WHERE n.scrapedDateTime >= :today
             """, News.class)
-            .setParameter("id", id)
+            .setParameter("today", today)
             .getResultList();
-        if (result.size() == 0) {
+        if (newsList.size() == 0) {
             LOG.info("no news!");
-            return new ArrayList<NewsReaction>();
+            return false;
         }
         
-        News news = result.get(0);
-        if (news.reactions.size() >= 1) {
-            LOG.info("exist reactions in database.");
-            return news.reactions;
-        } else {
+        for (News news : newsList) {
+            LOG.info("news.id:" + news.id);
+            if (news.reactions.size() >= 1) {
+                LOG.info("exist reactions in database.");
+                continue;
+            }
+            
             LOG.info("scraping...");
             List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl);
             reactions = reactions.stream().map(reaction -> {
@@ -125,9 +149,14 @@ public class NewsService {
                 return reaction;
             }).toList();
             if (reactions.size() >= 1) {
+                LOG.info("save reactions.");
                 newsReactionRepository.saveAll(reactions);
             }
-            return reactions;
+            
+            // wait as random between 0 ~ 300 ms.
+            int sleepTime = new Random().nextInt(301);
+            Thread.sleep(sleepTime);
         }
+        return true;
     }
 }
