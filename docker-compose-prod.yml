@@ -1,5 +1,11 @@
 version: '3'
 services:
+  selenium:
+    image: selenium/standalone-firefox-debug:3.141.59
+    ports:
+      - 4444
+    volumes:
+      - /dev/shm:/dev/shm
   java:
     build: .
     ports:
@@ -8,6 +14,10 @@ services:
     volumes:
       - .:/project
     working_dir: /project
+    environment:
+      - SELENIUM_URL=http://selenium:4444/wd/hub
     env_file:
       - aws-credentials.env
+    depends_on:
+      - selenium
     entrypoint: ./entrypoint.sh

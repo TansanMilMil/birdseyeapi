@@ -1,17 +1,10 @@
 package com.birdseyeapi.birdseyeapi.SiteScraping;
 
 import java.io.IOException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import com.birdseyeapi.birdseyeapi.News;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +25,6 @@ public class SiteScraping {
         for (ScrapingBase scraping : scrapingList) {
             try {
                 List<News> list = scraping.extractNews();
-                //putToS3(newsList, scraping.getSourceBy());
                 LOG.info(scraping.getSourceBy() + " / scraped article: " + list.size());
                 newsList.addAll(list);
             }

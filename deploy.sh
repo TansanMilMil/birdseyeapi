@@ -2,7 +2,9 @@
 
 cd `dirname $0`
 echo -e '\e[32mstart build...\e[m'
-./gradlew build && \
+docker-compose down && \
+docker-compose up -d && \
+docker-compose exec java ./gradlew build && \
 
 echo -e '\e[32mcopy files to ec2...\e[m'
 scp -pr ./build wp-kimagure:/home/ec2-user/birds-eye/birdseyeapi/ && \

@@ -9,7 +9,9 @@ import com.rometools.rome.io.FeedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,5 +37,11 @@ public class NewsController {
     public boolean scrape() throws IOException {
         newsService.scrape();
         return true;
+    }
+    
+    @PostMapping("/scrape-ref")
+    public List<NewsReaction> scrapeRef(@RequestBody ScrapeRefRequest body) throws IOException, InterruptedException {
+        List<NewsReaction> reactions = newsService.scrapeRef(body.id);
+        return reactions;
     }
 }
