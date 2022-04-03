@@ -15,7 +15,9 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.birdseyeapi.birdseyeapi.SiteScraping.ScrapeTwitter;
+
+import com.birdseyeapi.birdseyeapi.SiteScraping.ScrapeReactionsByHatena;
+import com.birdseyeapi.birdseyeapi.SiteScraping.ScrapeReactionsByTwitter;
 import com.birdseyeapi.birdseyeapi.SiteScraping.SiteScraping;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
@@ -168,7 +170,9 @@ public class NewsService {
         }
         
         LOG.info("scraping...");
-        List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl, news.title);
+        List<NewsReaction> reactions = new ArrayList<>();
+        reactions.addAll(ScrapeReactionsByTwitter.extractReactions(news.articleUrl, news.title));
+        reactions.addAll(ScrapeReactionsByHatena.extractReactions(news.articleUrl, news.title));
         reactions = reactions.stream().map(reaction -> {
             reaction.news = news;
             return reaction;

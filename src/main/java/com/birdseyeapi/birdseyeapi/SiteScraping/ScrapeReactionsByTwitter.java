@@ -1,7 +1,6 @@
 package com.birdseyeapi.birdseyeapi.SiteScraping;
 
 import com.birdseyeapi.birdseyeapi.NewsReaction;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneId;
@@ -18,7 +17,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-public class ScrapeTwitter {
+public class ScrapeReactionsByTwitter {
     private static final Logger LOG = LogManager.getLogger();
     
     public static List<NewsReaction> extractReactions(String url, String title) throws InterruptedException, MalformedURLException {
@@ -29,7 +28,7 @@ public class ScrapeTwitter {
         WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), firefox);
         LOG.info("selenium is ready.");
         driver.get("https://twitter.com/search?f=tweets&vertical=default&q=" + url);
-        LOG.info("selenium is requesting the website.");
+        LOG.info("selenium is requesting twitter.");
         Thread.sleep(1000);
         LOG.info("request completed.");
         
@@ -43,7 +42,7 @@ public class ScrapeTwitter {
             LOG.info("-------------------------");
             LOG.info(text);
             NewsReaction reaction = new NewsReaction();
-            reaction.author = "undefined";
+            reaction.author = "twitter user";
             reaction.comment = text;
             reaction.scrapedDateTime = now;
             reactions.add(reaction);
