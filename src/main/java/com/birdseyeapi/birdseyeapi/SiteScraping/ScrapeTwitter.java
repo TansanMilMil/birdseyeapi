@@ -36,15 +36,16 @@ public class ScrapeTwitter {
         List<WebElement> articles = driver.findElements(By.cssSelector("#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(2) > div > section > div > div > div > div > div > article > div > div > div > div > div > div:nth-child(2) > div:nth-child(1)"));
         LOG.info("articles.size(): " + articles.size());
         for (WebElement article : articles) {
-            if (article.getText() != null && !article.getText().equals("")) {
-                LOG.info("-------------------------");
-                LOG.info(article.getText());
-                NewsReaction reaction = new NewsReaction();
-                reaction.author = "undefined";
-                reaction.comment = article.getText();
-                reaction.scrapedDateTime = now;
-                reactions.add(reaction);                
+            if (article.getText() == null || article.getText().trim().isEmpty()) {
+                continue;
             }
+            LOG.info("-------------------------");
+            LOG.info(article.getText());
+            NewsReaction reaction = new NewsReaction();
+            reaction.author = "undefined";
+            reaction.comment = article.getText();
+            reaction.scrapedDateTime = now;
+            reactions.add(reaction);
         }
         driver.quit();
         LOG.info("selenium quit.");
