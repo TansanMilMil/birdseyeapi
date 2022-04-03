@@ -2,6 +2,8 @@ package com.birdseyeapi.birdseyeapi;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,6 +28,6 @@ public class News {
     public String articleUrl;
     @Column(columnDefinition = "TEXT")
     public String articleImageUrl;
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", cascade = CascadeType.REMOVE)
     List<NewsReaction> reactions;
 }

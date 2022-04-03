@@ -41,10 +41,29 @@ public class NewsService {
     private final String GOOGLE_RSS_TRENDS_DAILY = "https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP";
     private static final Logger LOG = LogManager.getLogger();
 
-    public List<News> getTodayNews() throws IOException {
+    public List<NewsWithReactionCount> getTodayNews() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
-        List<News> newsList = newsRepository.findByscrapedDateTimeGreaterThanEqual(today);
+        List<NewsWithReactionCount> newsList = em.createQuery("""
+                SELECT 
+                    NEW com.birdseyeapi.birdseyeapi.NewsWithReactionCount(
+                        n.id
+                        , MAX(n.title)
+                        , MAX(n.description)
+                        , MAX(n.sourceBy)
+                        , MAX(n.scrapedUrl)
+                        , MAX(n.scrapedDateTime)
+                        , MAX(n.articleUrl)
+                        , MAX(n.articleImageUrl)
+                        , COUNT(r.id)
+                    )
+                FROM News n 
+                LEFT JOIN n.reactions r
+                WHERE n.scrapedDateTime >= :today
+                GROUP BY n.id
+            """, NewsWithReactionCount.class)
+            .setParameter("today", today)
+            .getResultList();
         Collections.shuffle(newsList);
         return newsList;
     }
@@ -137,7 +156,7 @@ public class NewsService {
         
         for (News news : newsList) {
             LOG.info("news.id:" + news.id);
-            if (news.reactions.size() >= 1) {
+            if (news.reactions != null && news.reactions.size() >= 1) {
                 LOG.info("exist reactions in database.");
                 continue;
             }
