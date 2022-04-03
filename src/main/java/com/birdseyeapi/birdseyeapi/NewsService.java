@@ -137,7 +137,6 @@ public class NewsService {
         return true;
     }
     
-    @Transactional
     public boolean scrapeNewsReactions() throws InterruptedException, MalformedURLException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
@@ -155,27 +154,32 @@ public class NewsService {
         }
         
         for (News news : newsList) {
-            LOG.info("news.id:" + news.id);
-            if (news.reactions != null && news.reactions.size() >= 1) {
-                LOG.info("exist reactions in database.");
-                continue;
-            }
-            
-            LOG.info("scraping...");
-            List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl);
-            reactions = reactions.stream().map(reaction -> {
-                reaction.news = news;
-                return reaction;
-            }).toList();
-            if (reactions.size() >= 1) {
-                LOG.info("save reactions.");
-                newsReactionRepository.saveAll(reactions);
-            }
-            
-            // wait as random between 0 ~ 300 ms.
-            int sleepTime = new Random().nextInt(301);
-            Thread.sleep(sleepTime);
+            saveReactions(news);
         }
         return true;
+    }
+
+    @Transactional
+    private void saveReactions(News news) throws MalformedURLException, InterruptedException {
+        LOG.info("news.id:" + news.id);
+        if (news.reactions != null && news.reactions.size() >= 1) {
+            LOG.info("exist reactions in database.");
+            return;
+        }
+        
+        LOG.info("scraping...");
+        List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl);
+        reactions = reactions.stream().map(reaction -> {
+            reaction.news = news;
+            return reaction;
+        }).toList();
+        if (reactions.size() >= 1) {
+            LOG.info("save reactions.");
+            newsReactionRepository.saveAll(reactions);
+        }
+        
+        // wait as random between 0 ~ 300 ms.
+        int sleepTime = new Random().nextInt(301);
+        Thread.sleep(sleepTime);
     }
 }
