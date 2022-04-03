@@ -168,7 +168,7 @@ public class NewsService {
         }
         
         LOG.info("scraping...");
-        List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl);
+        List<NewsReaction> reactions = ScrapeTwitter.extractReactions(news.articleUrl, news.title);
         reactions = reactions.stream().map(reaction -> {
             reaction.news = news;
             return reaction;

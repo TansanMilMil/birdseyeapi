@@ -21,7 +21,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 public class ScrapeTwitter {
     private static final Logger LOG = LogManager.getLogger();
     
-    public static List<NewsReaction> extractReactions(String url) throws InterruptedException, MalformedURLException {
+    public static List<NewsReaction> extractReactions(String url, String title) throws InterruptedException, MalformedURLException {
         List<NewsReaction> reactions = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         
@@ -36,14 +36,15 @@ public class ScrapeTwitter {
         List<WebElement> articles = driver.findElements(By.cssSelector("#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(2) > div > section > div > div > div > div > div > article > div > div > div > div > div > div:nth-child(2) > div:nth-child(1)"));
         LOG.info("articles.size(): " + articles.size());
         for (WebElement article : articles) {
-            if (article.getText() == null || article.getText().trim().isEmpty()) {
+            String text = article.getText();
+            if (text == null || text.trim().isEmpty() || text.equals(title)) {
                 continue;
             }
             LOG.info("-------------------------");
-            LOG.info(article.getText());
+            LOG.info(text);
             NewsReaction reaction = new NewsReaction();
             reaction.author = "undefined";
-            reaction.comment = article.getText();
+            reaction.comment = text;
             reaction.scrapedDateTime = now;
             reactions.add(reaction);
         }
