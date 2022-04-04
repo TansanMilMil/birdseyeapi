@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 public class SiteScraping {
     private static final Logger LOG = LogManager.getLogger();
     
-    public static List<News> scrape() throws IOException {
+    public static List<News> scrape() {
         List<ScrapingBase> scrapingList = Arrays.asList(
             new ScrapeAtMarkIt(),
             new ScrapeCloudWatchImpress(),
@@ -21,16 +21,17 @@ public class SiteScraping {
             new ScrapeZDNet(),
             new ScrapeGigazine()
         );
-        List<News> newsList = new ArrayList<News>();
+        List<News> newsList = new ArrayList<>();
         for (ScrapingBase scraping : scrapingList) {
             try {
                 List<News> list = scraping.extractNews();
+                list = list.subList(0, 5);
                 LOG.info(scraping.getSourceBy() + " / scraped article: " + list.size());
                 newsList.addAll(list);
             }
             catch (Exception e) {
                 LOG.info(scraping.getSourceBy() + " / scraped failed...");
-                LOG.info(e.getStackTrace().toString());
+                LOG.info(e.getStackTrace());
             }
         }
         return newsList;
