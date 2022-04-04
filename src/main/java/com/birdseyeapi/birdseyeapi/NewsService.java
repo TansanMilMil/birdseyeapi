@@ -46,6 +46,12 @@ public class NewsService {
     public List<NewsWithReactionCount> getTodayNews() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
+
+        Long maxScrapingUnitId = em.createQuery("""
+                SELECT MAX(n.scrapingUnitId)
+                FROM News n
+            """, Long.class)
+            .getSingleResult();
         List<NewsWithReactionCount> newsList = em.createQuery("""
                 SELECT 
                     NEW com.birdseyeapi.birdseyeapi.NewsWithReactionCount(
@@ -61,10 +67,10 @@ public class NewsService {
                     )
                 FROM News n 
                 LEFT JOIN n.reactions r
-                WHERE n.scrapedDateTime >= :today
+                WHERE n.scrapingUnitId >= :maxScrapingUnitId
                 GROUP BY n.id
             """, NewsWithReactionCount.class)
-            .setParameter("today", today)
+            .setParameter("maxScrapingUnitId", maxScrapingUnitId)
             .getResultList();
         Collections.shuffle(newsList);
         return newsList;
@@ -132,9 +138,17 @@ public class NewsService {
     public boolean scrape() throws IOException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
-        newsRepository.deleteByscrapedDateTimeGreaterThanEqual(today);
 
         List<News> newsList = SiteScraping.scrape();
+        Long maxScrapingUnitId = em.createQuery("""
+                SELECT MAX(n.scrapingUnitId)
+                FROM News n
+            """, Long.class)
+                .getSingleResult();
+        newsList = newsList.stream().map(news -> {
+            news.scrapingUnitId = maxScrapingUnitId + 1;
+            return news;
+        }).toList();
         newsRepository.saveAll(newsList);
         return true;
     }
@@ -142,13 +156,19 @@ public class NewsService {
     public boolean scrapeNewsReactions() throws InterruptedException, MalformedURLException {
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
         ZonedDateTime today = ZonedDateTime.of(now.getYear(), now.getMonthValue(), now.getDayOfMonth(), 0, 0, 0, 0, now.getZone());
+        Long maxScrapingUnitId = em.createQuery("""
+                SELECT MAX(n.scrapingUnitId)
+                FROM News n
+            """, Long.class)
+            .getSingleResult();
+
         List<News> newsList = em.createQuery("""
                 SELECT n
                 FROM News n 
                 LEFT JOIN FETCH n.reactions
-                WHERE n.scrapedDateTime >= :today
+                WHERE n.scrapingUnitId = :maxScrapingUnitId
             """, News.class)
-            .setParameter("today", today)
+            .setParameter("maxScrapingUnitId", maxScrapingUnitId)
             .getResultList();
         if (newsList.size() == 0) {
             LOG.info("no news!");

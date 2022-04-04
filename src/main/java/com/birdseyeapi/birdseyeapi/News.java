@@ -16,6 +16,7 @@ public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public long id;
+    public long scrapingUnitId;
     @Column(length = 200)
     public String title;
     @Column(columnDefinition = "TEXT")
