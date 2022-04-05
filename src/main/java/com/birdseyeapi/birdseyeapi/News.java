@@ -29,6 +29,6 @@ public class News {
     public String articleUrl;
     @Column(columnDefinition = "TEXT")
     public String articleImageUrl;
-    @OneToMany(mappedBy = "news", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "news")
     List<NewsReaction> reactions;
 }

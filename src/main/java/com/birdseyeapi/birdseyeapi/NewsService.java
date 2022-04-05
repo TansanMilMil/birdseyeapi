@@ -9,24 +9,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.birdseyeapi.birdseyeapi.SiteScraping.ScrapeReactionsByHatena;
-import com.birdseyeapi.birdseyeapi.SiteScraping.ScrapeReactionsByTwitter;
-import com.birdseyeapi.birdseyeapi.SiteScraping.SiteScraping;
+import com.birdseyeapi.birdseyeapi.ScrapingReaction.ScrapeReactionsByHatena;
+import com.birdseyeapi.birdseyeapi.ScrapingReaction.ScrapeReactionsByTwitter;
+import com.birdseyeapi.birdseyeapi.ScrapingNews.SiteScraping;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+
 import java.util.Random;
 import org.jdom2.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -202,8 +198,8 @@ public class NewsService {
             newsReactionRepository.saveAll(reactions);
         }
         
-        // wait as random between 0 ~ 300 ms.
-        int sleepTime = new Random().nextInt(301);
+        // wait as random between 0 ~ 100 ms.
+        int sleepTime = new Random().nextInt(101);
         Thread.sleep(sleepTime);
     }
 }
