@@ -1,4 +1,4 @@
-package com.birdseyeapi.birdseyeapi.SiteScraping;
+package com.birdseyeapi.birdseyeapi.ScrapingNews;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,16 +9,15 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeZDNet implements ScrapingBase {
+public class ScrapeCloudWatchImpress implements ScrapingBase {
     private final Logger LOG = LogManager.getLogger();
-    private final String SOURCE_BY = "zdnet";
-    private final String SOURCE_URL = "https://japan.zdnet.com";
+    private final String SOURCE_BY = "cloudWatchImpress";
+    private final String SOURCE_URL = "https://cloud.watch.impress.co.jp";
 
     @Override
     public String getSourceBy() {
@@ -31,23 +30,21 @@ public class ScrapeZDNet implements ScrapingBase {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#page-wrap > div.pg-container-main > main > section:nth-child(1) > div > ul > li");
+        Elements newsAreaList = doc.select("#main > article > aside.top-news.topics > div > ul > li.item.news");
         for (Element newsArea : newsAreaList) {
-            String href = SOURCE_URL + newsArea.select("a").attr("href");
-            String newsTitle = newsArea.select("a > div.txt > p.txt-ttl").text();
-            Elements newsImage = newsArea.select("a > div.thumb > img");
+            Elements newsTitle = newsArea.select("div.body > div.text > p.title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
-            news.title = newsTitle;
+            news.title = newsTitle.text();
             news.description = null;
             news.sourceBy = SOURCE_BY;
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
-            news.articleUrl = href;
-            news.articleImageUrl = SOURCE_URL + newsImage.attr("src");
+            news.articleUrl = newsTitle.attr("href");
+            news.articleImageUrl = null;
             newsList.add(news);
         }
 
         return newsList;
-    }            
+    }    
 }

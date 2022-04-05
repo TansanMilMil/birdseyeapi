@@ -1,4 +1,4 @@
-package com.birdseyeapi.birdseyeapi.SiteScraping;
+package com.birdseyeapi.birdseyeapi.ScrapingNews;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,16 +9,15 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeCloudWatchImpress implements ScrapingBase {
+public class ScrapeSrad implements ScrapingBase {
     private final Logger LOG = LogManager.getLogger();
-    private final String SOURCE_BY = "cloudWatchImpress";
-    private final String SOURCE_URL = "https://cloud.watch.impress.co.jp";
+    private final String SOURCE_BY = "srad";
+    private final String SOURCE_URL = "https://srad.jp";
 
     @Override
     public String getSourceBy() {
@@ -31,13 +30,14 @@ public class ScrapeCloudWatchImpress implements ScrapingBase {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#main > article > aside.top-news.topics > div > ul > li.item.news");
+        Elements newsAreaList = doc.select("#firehoselist > article");
         for (Element newsArea : newsAreaList) {
-            Elements newsTitle = newsArea.select("div.body > div.text > p.title > a");
+            Elements newsTitle = newsArea.select("header > h2.story > span[id^=\"title\"] > a");
+            Elements newsDescription = newsArea.select("div.body > div");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
             news.title = newsTitle.text();
-            news.description = null;
+            news.description = newsDescription.html();
             news.sourceBy = SOURCE_BY;
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;

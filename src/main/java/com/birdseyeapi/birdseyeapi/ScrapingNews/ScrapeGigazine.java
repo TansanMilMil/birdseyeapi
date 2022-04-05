@@ -1,4 +1,4 @@
-package com.birdseyeapi.birdseyeapi.SiteScraping;
+package com.birdseyeapi.birdseyeapi.ScrapingNews;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,16 +9,15 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeHatena implements ScrapingBase {
+public class ScrapeGigazine implements ScrapingBase {
     private final Logger LOG = LogManager.getLogger();
-    private final String SOURCE_BY = "hatena";
-    private final String SOURCE_URL = "https://b.hatena.ne.jp/hotentry/it";
+    private final String SOURCE_BY = "gigazine";
+    private final String SOURCE_URL = "https://gigazine.net";
 
     @Override
     public String getSourceBy() {
@@ -31,9 +30,10 @@ public class ScrapeHatena implements ScrapingBase {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#container > div.wrapper > div > div.entrylist-main > section > ul > li");
+        Elements newsAreaList = doc.select("#section > div > section > div.card");
         for (Element newsArea : newsAreaList) {
-            Elements newsTitle = newsArea.select("div > div.entrylist-contents-main > h3 > a");
+            Elements newsTitle = newsArea.select("h2 > a");
+            Elements newsImage = newsArea.select("div.thumb > a > img");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             String linkHref = newsTitle.attr("href");
             String description = null;
@@ -54,10 +54,10 @@ public class ScrapeHatena implements ScrapingBase {
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
             news.articleUrl = linkHref;
-            news.articleImageUrl = null;
-            newsList.add(news);            
+            news.articleImageUrl = newsImage.attr("src");
+            newsList.add(news);
         }
 
         return newsList;
-    }    
+    }        
 }
