@@ -1,0 +1,80 @@
+version: 2.1
+
+executors:
+  my-executor:
+    docker:
+      - image: circleci/python:3.8.5
+    working_directory: ~/work
+
+commands:
+  install:
+    steps:
+      - run:
+          name: install
+          command: |
+            if [[ ! -d aws-cli ]]; then
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              sudo ./aws/install --install-dir ~/work/aws-cli
+            fi
+            aws --version
+
+            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
+            docker -v
+            docker-compose -v
+  access:
+    steps:
+      - run:
+          name: access
+          command: |
+            export PATH=$PATH:$HOME/work/aws-cli/v2/current/bin
+            echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> ./aws-credentials.env
+            echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> ./aws-credentials.env
+
+            GLOBAL_IP="$(curl inet-ip.info)"
+            aws ec2 authorize-security-group-ingress --group-name ec2-wp-kimagure-circleci --protocol tcp --port 22 --cidr $GLOBAL_IP/32
+
+            cat \<<EOT > ~/work/src/main/resources/application.properties
+            spring.jpa.hibernate.ddl-auto=update
+            spring.datasource.url=$SPRING_DATASOURCE_URL
+            spring.datasource.username=$SPRING_DATASOURCE_USERNAME
+            spring.datasource.password=$SPRING_DATASOURCE_PASSWORD
+            spring.datasource.driver-class-name =com.mysql.jdbc.Driver
+            EOT            
+  deploy:
+    steps:
+      - run: 
+          name: deploy
+          command: |
+            chmod +x ./deploy.sh
+            ./deploy.sh
+  clean:
+    steps:
+      - run:
+          name: clean
+          command: |
+            GLOBAL_IP="$(curl inet-ip.info)"
+            aws ec2 revoke-security-group-ingress --group-name ec2-wp-kimagure-circleci --protocol tcp --port 22 --cidr $GLOBAL_IP/32
+
+jobs:
+  build_deploy:
+    executor: my-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - install
+      - access
+      - deploy
+      - clean
+
+workflows:
+  version: 2.1
+  deploy-workflow:
+    jobs:
+      - build_deploy:
+          filters:
+            branches:
+              only:
+                - main
