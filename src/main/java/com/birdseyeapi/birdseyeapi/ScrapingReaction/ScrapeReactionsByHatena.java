@@ -24,31 +24,34 @@ public class ScrapeReactionsByHatena {
         
         DesiredCapabilities firefox = DesiredCapabilities.firefox();
         WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), firefox);
-        LOG.info("selenium is ready.");
-        url = url.replace("http://", "");
-        url = url.replace("https://", "");
-        driver.get("https://b.hatena.ne.jp/entry/s/" + url);
-        LOG.info("selenium is requesting hatena.");
-        Thread.sleep(1000);
-        LOG.info("request completed.");
-        
-        List<WebElement> articles = driver.findElements(By.cssSelector("#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > span.entry-comment-text.js-bookmark-comment"));
-        LOG.info("articles.size(): " + articles.size());
-        for (WebElement article : articles) {
-            String text = article.getText();
-            if (text == null || text.trim().isEmpty() || text.equals(title)) {
-                continue;
+        try {
+            LOG.info("selenium is ready.");
+            url = url.replace("http://", "");
+            url = url.replace("https://", "");
+            driver.get("https://b.hatena.ne.jp/entry/s/" + url);
+            LOG.info("selenium is requesting hatena.");
+            Thread.sleep(1000);
+            LOG.info("request completed.");
+            
+            List<WebElement> articles = driver.findElements(By.cssSelector("#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > span.entry-comment-text.js-bookmark-comment"));
+            LOG.info("articles.size(): " + articles.size());
+            for (WebElement article : articles) {
+                String text = article.getText();
+                if (text == null || text.trim().isEmpty() || text.equals(title)) {
+                    continue;
+                }
+                LOG.info("-------------------------");
+                LOG.info(text);
+                NewsReaction reaction = new NewsReaction();
+                reaction.author = "hatena user";
+                reaction.comment = text;
+                reaction.scrapedDateTime = now;
+                reactions.add(reaction);
             }
-            LOG.info("-------------------------");
-            LOG.info(text);
-            NewsReaction reaction = new NewsReaction();
-            reaction.author = "hatena user";
-            reaction.comment = text;
-            reaction.scrapedDateTime = now;
-            reactions.add(reaction);
+        } finally {
+            driver.quit();
+            LOG.info("selenium quit.");
         }
-        driver.quit();
-        LOG.info("selenium quit.");
         return reactions;
     }
 }
