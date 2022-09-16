@@ -1,9 +1,16 @@
 version: 2.1
 
+main_branch_only: &main_branch_only
+  filters:
+    branches:
+      only:
+        - main
+
 executors:
   my-executor:
     docker:
-      - image: circleci/python:3.8.5
+      - image: cimg/python:3.8.5
+    shell: /bin/bash -euxo pipefail
     working_directory: ~/work
 
 commands:
@@ -24,57 +31,88 @@ commands:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
             docker -v
             docker-compose -v
-  access:
+  set_credentials:
     steps:
       - run:
-          name: access
+          name: set_credentials
           command: |
+            # set AWS credentials
             export PATH=$PATH:$HOME/work/aws-cli/v2/current/bin
             echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> ./aws-credentials.env
             echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> ./aws-credentials.env
 
-            GLOBAL_IP="$(curl inet-ip.info)"
-            aws ec2 authorize-security-group-ingress --group-name ec2-wp-kimagure-circleci --protocol tcp --port 22 --cidr $GLOBAL_IP/32
-
+            # write spring settings
             cat \<<EOT > ~/work/src/main/resources/application.properties
             spring.jpa.hibernate.ddl-auto=update
             spring.datasource.url=$SPRING_DATASOURCE_URL
             spring.datasource.username=$SPRING_DATASOURCE_USERNAME
             spring.datasource.password=$SPRING_DATASOURCE_PASSWORD
             spring.datasource.driver-class-name =com.mysql.jdbc.Driver
-            EOT            
+            EOT
+  attach_security_group:
+    steps:
+      - run:
+          name: attach_security_group
+          command: |
+            # attach sucurity group to EC2 temporarily
+            GLOBAL_IP="$(curl inet-ip.info)"
+            aws ec2 authorize-security-group-ingress --group-name ec2-wp-kimagure-circleci --protocol tcp --port 22 --cidr $GLOBAL_IP/32
+  build:
+    steps:
+      - run: 
+          name: build
+          command: |
+            chmod +x ./build.sh
+            ./build.sh
+      - persist_to_workspace:
+          root: ~/work
+          paths:
+              - build/*
   deploy:
     steps:
+      - attach_workspace:
+          at: ~/work    
       - run: 
           name: deploy
           command: |
             chmod +x ./deploy.sh
             ./deploy.sh
-  clean:
+  detach_security_group:
     steps:
       - run:
-          name: clean
+          name: detach_security_group
           command: |
+            # detach security group from EC2
             GLOBAL_IP="$(curl inet-ip.info)"
             aws ec2 revoke-security-group-ingress --group-name ec2-wp-kimagure-circleci --protocol tcp --port 22 --cidr $GLOBAL_IP/32
+          when: always
 
 jobs:
-  build_deploy:
+  build:
     executor: my-executor
     steps:
       - checkout
       - setup_remote_docker
       - install
-      - access
+      - set_credentials
+      - build
+  deploy:
+    executor: my-executor
+    steps:
+      - checkout
+      - setup_remote_docker
+      - install
+      - set_credentials
+      - attach_security_group
       - deploy
-      - clean
+      - detach_security_group
 
 workflows:
-  version: 2.1
-  deploy-workflow:
+  deploy_ec2:
     jobs:
-      - build_deploy:
-          filters:
-            branches:
-              only:
-                - main
+      - build:
+          <<: *main_branch_only
+      - deploy:
+          <<: *main_branch_only
+          requires:
+            - build
