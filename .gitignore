@@ -39,3 +39,4 @@ out/
 
 application.properties
 !.gitkeep
+nginx/log/*

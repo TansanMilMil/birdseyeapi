@@ -20,4 +20,6 @@ public class NewsReaction {
     public ZonedDateTime scrapedDateTime;
     @ManyToOne
     public News news;
+    @Column(columnDefinition = "TEXT")
+    public String commentUrl;
 }

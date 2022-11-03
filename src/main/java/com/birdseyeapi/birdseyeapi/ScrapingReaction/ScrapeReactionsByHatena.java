@@ -17,23 +17,26 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class ScrapeReactionsByHatena {
     private static final Logger LOG = LogManager.getLogger();
-    
-    public static List<NewsReaction> extractReactions(String url, String title) throws InterruptedException, MalformedURLException {
+
+    public static List<NewsReaction> extractReactions(String url, String title)
+            throws InterruptedException, MalformedURLException {
         List<NewsReaction> reactions = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
-        
+
         DesiredCapabilities firefox = DesiredCapabilities.firefox();
         WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), firefox);
         try {
             LOG.info("selenium is ready.");
             url = url.replace("http://", "");
             url = url.replace("https://", "");
-            driver.get("https://b.hatena.ne.jp/entry/s/" + url);
+            url = "https://b.hatena.ne.jp/entry/s/" + url;
+            driver.get(url);
             LOG.info("selenium is requesting hatena.");
             Thread.sleep(1000);
             LOG.info("request completed.");
-            
-            List<WebElement> articles = driver.findElements(By.cssSelector("#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > span.entry-comment-text.js-bookmark-comment"));
+
+            List<WebElement> articles = driver.findElements(By.cssSelector(
+                    "#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > span.entry-comment-text.js-bookmark-comment"));
             LOG.info("articles.size(): " + articles.size());
             for (WebElement article : articles) {
                 String text = article.getText();
@@ -46,6 +49,7 @@ public class ScrapeReactionsByHatena {
                 reaction.author = "hatena user";
                 reaction.comment = text;
                 reaction.scrapedDateTime = now;
+                reaction.commentUrl = url;
                 reactions.add(reaction);
             }
         } finally {

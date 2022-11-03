@@ -12,7 +12,7 @@ services:
     build: .
     container_name: birdseyeapi_java
     ports:
-      - 8080
+      - 8080:8080
     tty: true
     volumes:
       - .:/project
@@ -33,3 +33,15 @@ services:
     tty: true
     ports:
       - 49999:49999
+  mysql:
+    image: mysql:8.0.28
+    volumes:
+      - db-store:/var/lib/mysql
+      - ./logs:/var/log/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root1603
+    ports:
+      - 3306:3306
+    restart: always
+volumes:
+  db-store:
