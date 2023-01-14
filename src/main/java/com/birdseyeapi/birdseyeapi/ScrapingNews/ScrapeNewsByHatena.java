@@ -4,8 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -14,8 +12,7 @@ import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeHatena implements ScrapingBase {
-    private final Logger LOG = LogManager.getLogger();
+public class ScrapeNewsByHatena implements ScrapingNews {
     private final String SOURCE_BY = "hatena";
     private final String SOURCE_URL = "https://b.hatena.ne.jp/hotentry/it";
 
@@ -41,9 +38,9 @@ public class ScrapeHatena implements ScrapingBase {
                 for (Element metaTag : metaTags) {
                     String name = metaTag.attr("name");
                     String content = metaTag.attr("content");
-                    if("description".equals(name)) {
+                    if ("description".equals(name)) {
                         description = content;
-                    }                    
+                    }
                 }
             }
             News news = new News();
@@ -54,9 +51,9 @@ public class ScrapeHatena implements ScrapingBase {
             news.scrapedDateTime = now;
             news.articleUrl = linkHref;
             news.articleImageUrl = null;
-            newsList.add(news);            
+            newsList.add(news);
         }
 
         return newsList;
-    }    
+    }
 }

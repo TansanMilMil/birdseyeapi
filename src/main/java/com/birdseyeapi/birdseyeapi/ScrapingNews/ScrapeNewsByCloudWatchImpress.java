@@ -4,8 +4,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -14,10 +12,9 @@ import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeZenn implements ScrapingBase {
-    private final Logger LOG = LogManager.getLogger();
-    private final String SOURCE_BY = "zenn";
-    private final String SOURCE_URL = "https://zenn.dev";
+public class ScrapeNewsByCloudWatchImpress implements ScrapingNews {
+    private final String SOURCE_BY = "cloudWatchImpress";
+    private final String SOURCE_URL = "https://cloud.watch.impress.co.jp";
 
     @Override
     public String getSourceBy() {
@@ -30,10 +27,9 @@ public class ScrapeZenn implements ScrapingBase {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#tech-trend > div > div > div > div > article > div[class^=\"ArticleList_content\"] > a[class^=\"ArticleList_link\"]");
+        Elements newsAreaList = doc.select("#main > article > aside.top-news.topics > div > ul > li.item.news");
         for (Element newsArea : newsAreaList) {
-            Elements newsTitle = newsArea.select("h2");
-            String href = SOURCE_URL + newsArea.attr("href");
+            Elements newsTitle = newsArea.select("div.body > div.text > p.title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
             news.title = newsTitle.text();
@@ -41,11 +37,11 @@ public class ScrapeZenn implements ScrapingBase {
             news.sourceBy = SOURCE_BY;
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
-            news.articleUrl = href;
+            news.articleUrl = newsTitle.attr("href");
             news.articleImageUrl = null;
             newsList.add(news);
         }
 
         return newsList;
-    }        
+    }
 }

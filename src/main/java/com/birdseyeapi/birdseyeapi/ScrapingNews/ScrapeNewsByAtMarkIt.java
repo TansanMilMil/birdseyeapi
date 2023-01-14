@@ -14,10 +14,9 @@ import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
 
-public class ScrapeZDNet implements ScrapingBase {
-    private final Logger LOG = LogManager.getLogger();
-    private final String SOURCE_BY = "zdnet";
-    private final String SOURCE_URL = "https://japan.zdnet.com";
+public class ScrapeNewsByAtMarkIt implements ScrapingNews {
+    private final String SOURCE_BY = "atMarkItNews";
+    private final String SOURCE_URL = "https://atmarkit.itmedia.co.jp/ait/subtop/news";
 
     @Override
     public String getSourceBy() {
@@ -30,23 +29,24 @@ public class ScrapeZDNet implements ScrapingBase {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#page-wrap > div.pg-container-main > main > section:nth-child(1) > div > ul > li");
+        Elements newsAreaList = doc.select("#subtopContents > div:nth-child(3) > div > div.colBoxInner > div");
         for (Element newsArea : newsAreaList) {
-            String href = SOURCE_URL + newsArea.select("a").attr("href");
-            String newsTitle = newsArea.select("a > div.txt > p.txt-ttl").text();
-            Elements newsImage = newsArea.select("a > div.thumb > img");
+            Elements newsTitle = newsArea.select("div.colBoxTitle > h3");
+            Elements newsDescription = newsArea.select("div.colBoxDescription > p");
+            Elements newsImage = newsArea.select("div.colBoxIcon > a > img");
+
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
-            news.title = newsTitle;
-            news.description = null;
+            news.title = newsTitle.text();
+            news.description = newsDescription.text();
             news.sourceBy = SOURCE_BY;
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
-            news.articleUrl = href;
-            news.articleImageUrl = SOURCE_URL + newsImage.attr("src");
+            news.articleUrl = newsTitle.select("a").attr("href");
+            news.articleImageUrl = newsImage.attr("src");
             newsList.add(news);
         }
 
         return newsList;
-    }            
+    }
 }
