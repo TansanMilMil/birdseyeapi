@@ -33,6 +33,8 @@ services:
     tty: true
     ports:
       - 49999:49999
+    depends_on:
+      - java
   mysql:
     image: mysql:8.0.28
     volumes:

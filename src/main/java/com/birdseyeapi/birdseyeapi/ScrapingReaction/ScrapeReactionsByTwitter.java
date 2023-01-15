@@ -39,11 +39,11 @@ public class ScrapeReactionsByTwitter implements ScrapingReaction {
             url = SOURCE_URL + url;
             driver.get(url);
             log.info("selenium is requesting twitter.");
-            Thread.sleep(1000);
+            Thread.sleep(5000);
             log.info("request completed.");
 
             List<WebElement> articles = driver.findElements(By.cssSelector(
-                    "#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(2) > div > section > div > div > div > div > div > article > div > div > div > div > div > div:nth-child(2) > div:nth-child(1)"));
+                    "#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(3) > div > section > div > div > div > div > div > div > article"));
             log.info("articles.size(): " + articles.size());
             for (WebElement article : articles) {
                 String text = article.getText();
