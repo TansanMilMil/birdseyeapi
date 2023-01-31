@@ -30,12 +30,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class NewsService {
-    @Autowired
     private NewsRepository newsRepository;
-
-    @Autowired
     private NewsReactionRepository newsReactionRepository;
-
     @PersistenceContext
     EntityManager em;
 
@@ -75,7 +71,7 @@ public class NewsService {
         return newsList;
     }
 
-    public List<News> getTrends() throws IllegalArgumentException, MalformedURLException, FeedException, IOException {
+    public List<News> getTrends() throws IllegalArgumentException, FeedException, IOException {
         String SOURCE_BY = "googleTrends";
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
