@@ -1,0 +1,40 @@
+name: GitHub Actions
+on:
+  push:
+    branches:
+      - "main"
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: ap-northeast-1
+jobs:
+  deploy-ec2:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup
+        uses: actions/checkout@v2
+        run: |
+          echo AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID >> aws-config.env
+          echo AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY >> aws-config.env
+          echo AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION >> aws-config.env
+          sudo apt install tree && tree
+          docker compose up -d
+          docker compose exec -T node chmod +x /project/deploy.sh
+          docker compose exec -T node /project/deploy.sh
+      - name: Generate application.properties
+        run: |
+          cat \<<EOT > /project/src/main/resources/application.properties
+          spring.jpa.hibernate.ddl-auto=update
+          spring.datasource.url=$SPRING_DATASOURCE_URL
+          spring.datasource.username=$SPRING_DATASOURCE_USERNAME
+          spring.datasource.password=$SPRING_DATASOURCE_PASSWORD
+          spring.datasource.driver-class-name =com.mysql.jdbc.Driver
+          EOT
+      - name: Gradle Build
+        run: |
+          chmod +x /project/build.sh
+          /project/build.sh
+      - name: Deploy to EC2
+        run: |
+          chmod +x ./deploy.sh
+          /project/deploy.sh
