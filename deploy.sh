@@ -21,12 +21,12 @@ cp -rp ./aws-credentials.env $BASE_DIR
 
 tar -zcvf $BASE_DIR.tgz -C $ARCHIVE_DIR $APP_NAME
 
-scp -o StrictHostKeyChecking=no -p $BASE_DIR.tgz $SSH_HUMMINGBIRD:/home/ec2-user/$APP_NAME.tgz
+scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa -p $BASE_DIR.tgz $SSH_HUMMINGBIRD:/home/ec2-user/$APP_NAME.tgz
 
-ssh -o StrictHostKeyChecking=no $SSH_HUMMINGBIRD tar -xzvf /home/ec2-user/$APP_NAME.tgz
+ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_HUMMINGBIRD tar -xzvf /home/ec2-user/$APP_NAME.tgz
 
 echo -e '\e[32mserve on EC2...\e[m'
-ssh -o StrictHostKeyChecking=no $SSH_HUMMINGBIRD /home/ec2-user/$APP_NAME/ec2-serve.sh
+ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $SSH_HUMMINGBIRD /home/ec2-user/$APP_NAME/ec2-serve.sh
 
 echo -e '\e[32mremove cloudfront caches...\e[m'
 aws cloudfront create-invalidation --distribution-id E1XC5ZNQDKFHT0 --paths "/*"
