@@ -31,8 +31,7 @@ public class NewsController {
     }
 
     @GetMapping("/news-reactions")
-    public List<NewsReaction> getNewsReactions(@RequestParam long id)
-            throws IOException, InterruptedException, InterruptedException {
+    public List<NewsReaction> getNewsReactions(@RequestParam long id) {
         List<NewsReaction> reactions = newsService.getNewsReactions(id);
         return reactions;
     }

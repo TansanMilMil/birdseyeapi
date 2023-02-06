@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NewsRepository extends JpaRepository<News, Integer> {
-    public List<News> findByscrapedDateTimeGreaterThanEqual(ZonedDateTime scrapedDateTime);
+    List<News> findByscrapedDateTimeGreaterThanEqual(ZonedDateTime scrapedDateTime);
 
-    public void deleteByscrapedDateTimeGreaterThanEqual(ZonedDateTime scrapedDateTime);
+    void deleteByscrapedDateTimeGreaterThanEqual(ZonedDateTime scrapedDateTime);
 }
