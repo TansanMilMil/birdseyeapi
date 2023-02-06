@@ -13,6 +13,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -32,8 +33,8 @@ public class ScrapeReactionsByTwitter implements ScrapingReaction {
         List<NewsReaction> reactions = new ArrayList<>();
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
-        DesiredCapabilities firefox = DesiredCapabilities.firefox();
-        WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), firefox);
+        FirefoxOptions browserOptions = new FirefoxOptions();
+        WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), browserOptions);
         try {
             log.info("selenium is ready.");
             url = SOURCE_URL + url;

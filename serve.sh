@@ -1,8 +1,6 @@
 #!/bin/bash -eux
 
 cd `dirname $0`
-docker compose down && \
-docker compose up -d && \
 
 docker compose exec java ./gradlew build && \
 # use application-dev.properties
