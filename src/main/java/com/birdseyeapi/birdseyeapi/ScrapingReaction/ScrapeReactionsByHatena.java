@@ -32,7 +32,6 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
     public List<NewsReaction> extractReactions(String url, String title)
             throws InterruptedException, MalformedURLException {
         List<NewsReaction> reactions = new ArrayList<>();
-        ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
 
         FirefoxOptions browserOptions = new FirefoxOptions();
         WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), browserOptions);
@@ -59,7 +58,7 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
                 NewsReaction reaction = new NewsReaction();
                 reaction.author = "hatena user";
                 reaction.comment = text;
-                reaction.scrapedDateTime = now;
+                reaction.scrapedDateTime = ZonedDateTime.now(ZoneId.of("UTC"));
                 reaction.commentUrl = url;
                 reactions.add(reaction);
             }
