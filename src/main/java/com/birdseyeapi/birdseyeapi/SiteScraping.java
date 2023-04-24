@@ -32,7 +32,7 @@ public class SiteScraping {
         for (ScrapingNews target : targets) {
             try {
                 List<News> list = target.extractNews();
-                list = list.subList(0, 5);
+                list = list.subList(0, 10);
                 log.info(target.getSourceBy() + " -> scraped article: " + list.size());
                 newsList.addAll(list);
             } catch (Exception e) {

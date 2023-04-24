@@ -47,7 +47,7 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
             log.info("request completed.");
 
             List<WebElement> articles = driver.findElements(By.cssSelector(
-                    "#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > span.entry-comment-text.js-bookmark-comment"));
+                    "#container > div > div.entry-contents > div.entry-main > div.entry-comments > div > div.bookmarks-sort-panels.js-bookmarks-sort-panels > div.is-active.bookmarks-sort-panel.js-bookmarks-sort-panel > div > div > div.entry-comment-contents-main > .entry-comments-contents-body > .js-bookmark-comment"));
             log.info("articles.size(): " + articles.size());
             for (WebElement article : articles) {
                 String text = article.getText();

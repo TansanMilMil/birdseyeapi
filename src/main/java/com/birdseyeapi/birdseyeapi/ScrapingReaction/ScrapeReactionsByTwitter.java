@@ -44,7 +44,7 @@ public class ScrapeReactionsByTwitter implements ScrapingReaction {
             log.info("request completed.");
 
             List<WebElement> articles = driver.findElements(By.cssSelector(
-                    "#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(3) > div > section > div > div > div > div > div > div > article"));
+                    "#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(3) > div > section > div > div > div > div > div > article"));
             log.info("articles.size(): " + articles.size());
             for (WebElement article : articles) {
                 String text = article.getText();
