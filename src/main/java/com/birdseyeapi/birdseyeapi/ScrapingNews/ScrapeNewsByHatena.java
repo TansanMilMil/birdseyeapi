@@ -27,9 +27,9 @@ public class ScrapeNewsByHatena implements ScrapingNews {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#container > div.wrapper > div > div.entrylist-main > section > ul > li");
+        Elements newsAreaList = doc.select("#container .entrylist-contents-main");
         for (Element newsArea : newsAreaList) {
-            Elements newsTitle = newsArea.select("div > div.entrylist-contents-main > h3 > a");
+            Elements newsTitle = newsArea.select(".entrylist-contents-title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             String linkHref = newsTitle.attr("href");
             String description = null;

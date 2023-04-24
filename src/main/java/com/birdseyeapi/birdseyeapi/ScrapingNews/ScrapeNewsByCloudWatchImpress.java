@@ -27,9 +27,9 @@ public class ScrapeNewsByCloudWatchImpress implements ScrapingNews {
 
         // jsoupで解析
         Document doc = Jsoup.connect(SOURCE_URL).get();
-        Elements newsAreaList = doc.select("#main > article > aside.top-news.topics > div > ul > li.item.news");
+        Elements newsAreaList = doc.select("li.item.news");
         for (Element newsArea : newsAreaList) {
-            Elements newsTitle = newsArea.select("div.body > div.text > p.title > a");
+            Elements newsTitle = newsArea.select("p.title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
             news.title = newsTitle.text();
