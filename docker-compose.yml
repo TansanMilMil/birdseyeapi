@@ -32,18 +32,19 @@ services:
     restart: always
     tty: true
     ports:
-      - 49999:49999
+      - 81:81
     depends_on:
       - java
   mysql:
     image: mysql:8.0.28
+    container_name: birdseyeapi_mysql
     volumes:
       - db-store:/var/lib/mysql
       - ./logs:/var/log/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root1603
     ports:
-      - 3306:3306
+      - 3307:3306
     restart: always
 volumes:
   db-store:
