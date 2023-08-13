@@ -40,4 +40,5 @@ out/
 application.properties
 !.gitkeep
 nginx/log/*
+deploy-logs/*
 archive/

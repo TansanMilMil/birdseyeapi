@@ -2,6 +2,7 @@ plugins {
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
 	id("java")
+	id("application")
 }
 
 group = "com.birdseyeapi"
@@ -33,6 +34,10 @@ dependencies {
   	runtimeOnly("mysql:mysql-connector-java")
 	implementation("org.seleniumhq.selenium:selenium-java:4.8.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+application {
+	mainClassName = "com.birdseyeapi.birdseyeapi.BirdseyeapiApplication"
 }
 
 tasks.withType<Test> {

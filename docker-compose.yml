@@ -20,7 +20,8 @@ services:
     working_dir: /project
     environment:
       - SELENIUM_URL=http://selenium:4444/wd/hub
-    entrypoint: ./entrypoint.sh
+      - BIRDSEYEAPI_EXECUTION_MODE
+    entrypoint: ./java-entrypoint.sh
   nginx:
     image: nginx:1.19.6
     container_name: birdseyeapi_nginx
