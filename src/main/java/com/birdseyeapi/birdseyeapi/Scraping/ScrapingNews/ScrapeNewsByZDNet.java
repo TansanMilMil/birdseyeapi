@@ -16,7 +16,9 @@ import com.birdseyeapi.birdseyeapi.News;
 import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ScrapeNewsByZDNet implements ScrapingNews {
@@ -34,6 +36,7 @@ public class ScrapeNewsByZDNet implements ScrapingNews {
         List<News> newsList = new ArrayList<News>();
 
         // jsoupで解析
+        log.info("scrape " + SOURCE_BY);
         Document doc = Jsoup.connect(SOURCE_URL).get();
         Elements newsAreaList = doc
                 .select("#page-wrap > div.pg-container-main > main > section:nth-child(1) > div > ul > li");
@@ -52,6 +55,8 @@ public class ScrapeNewsByZDNet implements ScrapingNews {
             news.articleImageUrl = SOURCE_URL + newsImage.attr("src");
             news.summarizedText = summarizeNews.summarize(news.articleUrl);
             newsList.add(news);
+
+            log.info("scraped: " + news.title);
         }
 
         return newsList;
