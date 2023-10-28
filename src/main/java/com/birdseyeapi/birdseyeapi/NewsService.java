@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.birdseyeapi.birdseyeapi.Scraping.SiteScraping;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -16,6 +17,7 @@ import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Random;
@@ -24,12 +26,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class NewsService {
-    @Autowired
-    private NewsRepository newsRepository;
-    @Autowired
-    private NewsReactionRepository newsReactionRepository;
+    private final NewsRepository newsRepository;
+    private final NewsReactionRepository newsReactionRepository;
 
     private final String GOOGLE_RSS_TRENDS_DAILY = "https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP";
 

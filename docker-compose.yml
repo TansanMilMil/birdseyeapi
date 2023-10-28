@@ -21,6 +21,8 @@ services:
     environment:
       - SELENIUM_URL=http://selenium:4444/wd/hub
       - BIRDSEYEAPI_EXECUTION_MODE
+      - OPENAI_CHAT_ENDPOINT=https://api.openai.com/v1/chat/completions
+      - OPENAI_API_KEY
     entrypoint: ./java-entrypoint.sh
   nginx:
     image: nginx:1.19.6

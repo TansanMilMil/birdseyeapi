@@ -1,19 +1,21 @@
-package com.birdseyeapi.birdseyeapi;
+package com.birdseyeapi.birdseyeapi.Scraping;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsByAtMarkIt;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsByCloudWatchImpress;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsByHatena;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsBySrad;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsByZDNet;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapeNewsByZenn;
-import com.birdseyeapi.birdseyeapi.ScrapingNews.ScrapingNews;
-import com.birdseyeapi.birdseyeapi.ScrapingReaction.ScrapeReactionsByHatena;
-import com.birdseyeapi.birdseyeapi.ScrapingReaction.ScrapeReactionsByTwitter;
-import com.birdseyeapi.birdseyeapi.ScrapingReaction.ScrapingReaction;
+import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.NewsReaction;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByAtMarkIt;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByCloudWatchImpress;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByHatena;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsBySrad;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZDNet;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZenn;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapingNews;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByHatena;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByTwitter;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapingReaction;
 
 import lombok.extern.slf4j.Slf4j;
 
