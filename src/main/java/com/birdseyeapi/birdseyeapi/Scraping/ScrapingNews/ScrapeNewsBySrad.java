@@ -46,7 +46,7 @@ public class ScrapeNewsBySrad implements ScrapingNews {
             news.sourceBy = SOURCE_BY;
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
-            news.articleUrl = newsTitle.attr("href");
+            news.articleUrl = "https:" + newsTitle.attr("href");
             news.articleImageUrl = null;
             news.summarizedText = summarizeNews.summarize(news.articleUrl);
             newsList.add(news);

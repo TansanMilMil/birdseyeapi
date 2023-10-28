@@ -46,6 +46,10 @@ public class ScrapeNewsByCloudWatchImpress implements ScrapingNews {
             news.scrapedUrl = SOURCE_URL;
             news.scrapedDateTime = now;
             news.articleUrl = newsTitle.attr("href");
+            // CloudWatchImpress URL sometimes has protocol string.
+            if (!news.articleUrl.matches("^https:\\/\\/.*")) {
+                news.articleUrl = SOURCE_URL + news.articleUrl;
+            }
             news.articleImageUrl = null;
             news.summarizedText = summarizeNews.summarize(news.articleUrl);
             newsList.add(news);

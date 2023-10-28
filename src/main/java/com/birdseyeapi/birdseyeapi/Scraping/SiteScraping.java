@@ -10,7 +10,6 @@ import com.birdseyeapi.birdseyeapi.News;
 import com.birdseyeapi.birdseyeapi.NewsReaction;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByAtMarkIt;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByCloudWatchImpress;
-import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByGigazine;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByHatena;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsBySrad;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZDNet;
@@ -48,14 +47,17 @@ public class SiteScraping {
         for (ScrapingNews target : targets) {
             try {
                 List<News> list = target.extractNews();
-                list = list.subList(0, 10);
+                // Sometimes, There are too many news.
+                if (list.size() > 10) {
+                    list = list.subList(0, 10);
+                }
                 log.info(target.getSourceBy() + " -> scraped article: " + list.size());
                 newsList.addAll(list);
             } catch (Exception e) {
                 // continue scraping even if it occur exception.
                 log.error(target.getSourceBy() + " -> scraped failed...");
                 log.error(e.getMessage());
-                log.error(e.getStackTrace().toString());
+                e.printStackTrace();
             }
         }
         return newsList;

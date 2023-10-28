@@ -64,7 +64,7 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            log.error(e.getStackTrace().toString());
+            e.printStackTrace();
         } finally {
             driver.quit();
             log.info("selenium quit.");

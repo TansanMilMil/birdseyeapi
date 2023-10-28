@@ -20,6 +20,7 @@ public class OpenAISummarizer implements AISummarizer {
     private static final String OpenAIEndpoint = System.getenv("OPENAI_CHAT_ENDPOINT");
     private static final String OpenAIAPIKey = System.getenv("OPENAI_API_KEY");
     private static final String OpenAIModel = "gpt-3.5-turbo";
+    private static final int MaxPromptTextLength = 3000;
     private final HttpClient httpClient;
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -30,12 +31,17 @@ public class OpenAISummarizer implements AISummarizer {
     @Override
     public String summarize(String text) throws IOException, InterruptedException {
         List<OpenAISummarizeMessage> messages = new ArrayList<>();
-        messages.add(new OpenAISummarizeMessage(OpenAIMessageRole.User.GetStrName(), String.format("""
+        // There is 4097 tokens limit when using gpt-3.5-turbo, thus a prompt must be short.
+        String prompt = String.format("""
             次の文章を日本語で要約してください。
             なお、要約結果の文章は200文字以内に収まるように調整してください。
             ---
             %s
-        """, text)));
+        """, text);
+        if (prompt.length() > MaxPromptTextLength) {
+            prompt = prompt.substring(0, MaxPromptTextLength);
+        }
+        messages.add(new OpenAISummarizeMessage(OpenAIMessageRole.User.GetStrName(), prompt));
         OpenAISummarizeRequest reqBody = new OpenAISummarizeRequest(OpenAIModel, messages);
 
         final HttpRequest req = HttpRequest
