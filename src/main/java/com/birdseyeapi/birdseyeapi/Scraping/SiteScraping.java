@@ -4,10 +4,13 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.birdseyeapi.birdseyeapi.News;
 import com.birdseyeapi.birdseyeapi.NewsReaction;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByAtMarkIt;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByCloudWatchImpress;
+import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByGigazine;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByHatena;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsBySrad;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZDNet;
@@ -17,19 +20,30 @@ import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByHa
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByTwitter;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapingReaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class SiteScraping {
-    public static List<News> scrapeNews() {
+    private final ScrapeNewsByAtMarkIt scrapeNewsByAtMarkIt;
+    private final ScrapeNewsByCloudWatchImpress scrapeNewsByCloudWatchImpress;
+    private final ScrapeNewsByHatena scrapeNewsByHatena;
+    private final ScrapeNewsByZenn scrapeNewsByZenn;
+    private final ScrapeNewsBySrad scrapeNewsBySrad;
+    // private final ScrapeNewsByGigazine scrapeNewsByGigazine;
+    private final ScrapeNewsByZDNet scrapeNewsByZDNet;
+
+    public List<News> scrapeNews() {
         List<ScrapingNews> targets = List.of(
-                new ScrapeNewsByAtMarkIt(),
-                new ScrapeNewsByCloudWatchImpress(),
-                new ScrapeNewsByHatena(),
-                new ScrapeNewsByZenn(),
-                new ScrapeNewsBySrad(),
-                // new ScrapeGigazine(),
-                new ScrapeNewsByZDNet());
+                scrapeNewsByAtMarkIt,
+                scrapeNewsByCloudWatchImpress,
+                scrapeNewsByHatena,
+                scrapeNewsByZenn,
+                scrapeNewsBySrad,
+                // scrapeGigazine,
+                scrapeNewsByZDNet);
         List<News> newsList = new ArrayList<>();
         for (ScrapingNews target : targets) {
             try {
@@ -47,7 +61,7 @@ public class SiteScraping {
         return newsList;
     }
 
-    public static List<NewsReaction> scrapeReactions(News news) throws MalformedURLException, InterruptedException {
+    public List<NewsReaction> scrapeReactions(News news) throws MalformedURLException, InterruptedException {
         List<ScrapingReaction> targets = List.of(
                 new ScrapeReactionsByTwitter(),
                 new ScrapeReactionsByHatena());

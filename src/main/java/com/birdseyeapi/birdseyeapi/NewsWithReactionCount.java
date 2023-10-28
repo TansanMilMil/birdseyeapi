@@ -10,6 +10,7 @@ public class NewsWithReactionCount {
     private long id;
     private String title;
     private String description;
+    private String summarizedText;
     private String sourceBy;
     private String scrapedUrl;
     private ZonedDateTime scrapedDateTime;

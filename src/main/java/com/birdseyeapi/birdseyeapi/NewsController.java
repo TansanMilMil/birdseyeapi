@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("news")
 public class NewsController {
     private final NewsService newsService;
-    private final AISummarizer aiSummarizer;
 
     @GetMapping("/today-news")
     public List<NewsWithReactionCount> getTodayNews() throws IOException {
@@ -47,11 +46,5 @@ public class NewsController {
         newsService.scrape();
         newsService.scrapeNewsReactions();
         return true;
-    }
-    
-    @PostMapping("/summarize")
-    public String summarize(@RequestBody NewsSummarizeReqest body) throws IOException, InterruptedException {
-        String summarizeText = aiSummarizer.summarize(body.getText());
-        return summarizeText;
     }
 }

@@ -22,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Random;
 import org.jdom2.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 public class NewsService {
     private final NewsRepository newsRepository;
     private final NewsReactionRepository newsReactionRepository;
+    private final SiteScraping siteScraping;
 
     private final String GOOGLE_RSS_TRENDS_DAILY = "https://trends.google.co.jp/trends/trendingsearches/daily/rss?geo=JP";
 
@@ -92,7 +92,7 @@ public class NewsService {
 
     @Transactional
     public boolean scrape() {
-        List<News> newsList = SiteScraping.scrapeNews();
+        List<News> newsList = siteScraping.scrapeNews();
 
         Long maxScrapingUnitId = newsReactionRepository.findMaxScrapingUnitId();
         newsList = newsList.stream().map(news -> {
@@ -127,7 +127,7 @@ public class NewsService {
             return;
         }
 
-        List<NewsReaction> reactions = SiteScraping.scrapeReactions(news);
+        List<NewsReaction> reactions = siteScraping.scrapeReactions(news);
         reactions = reactions.stream().map(reaction -> {
             reaction.news = news;
             return reaction;

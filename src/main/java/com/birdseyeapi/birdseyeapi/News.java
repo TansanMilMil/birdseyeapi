@@ -20,6 +20,8 @@ public class News {
     public String title;
     @Column(columnDefinition = "TEXT")
     public String description;
+    @Column(columnDefinition = "TEXT")
+    public String summarizedText;
     public String sourceBy;
     @Column(columnDefinition = "TEXT")
     public String scrapedUrl;

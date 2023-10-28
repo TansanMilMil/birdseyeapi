@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.birdseyeapi"
-version = "0.0.1-SNAPSHOT"
+version = "1.6.0"
 java.sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
 
 configurations {

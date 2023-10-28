@@ -21,6 +21,7 @@ public interface NewsReactionRepository extends JpaRepository<NewsReaction, Inte
                 n.id
                 , MAX(n.title)
                 , MAX(n.description)
+                , MAX(n.summarizedText)
                 , MAX(n.sourceBy)
                 , MAX(n.scrapedUrl)
                 , MAX(n.scrapedDateTime)

@@ -4,6 +4,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -11,10 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
 public class ScrapeNewsByGigazine implements ScrapingNews {
     private final String SOURCE_BY = "gigazine";
     private final String SOURCE_URL = "https://gigazine.net";
+    private final SummarizeNews summarizeNews;
 
     @Override
     public String getSourceBy() {
@@ -52,6 +60,7 @@ public class ScrapeNewsByGigazine implements ScrapingNews {
             news.scrapedDateTime = now;
             news.articleUrl = linkHref;
             news.articleImageUrl = newsImage.attr("src");
+            news.summarizedText = summarizeNews.summarize(news.articleUrl);
             newsList.add(news);
         }
 
