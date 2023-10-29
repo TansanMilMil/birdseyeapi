@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.birdseyeapi.birdseyeapi.News;
-import com.birdseyeapi.birdseyeapi.NewsReaction;
+import com.birdseyeapi.birdseyeapi.News.News;
+import com.birdseyeapi.birdseyeapi.News.NewsReaction;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByAtMarkIt;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByCloudWatchImpress;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByHatena;

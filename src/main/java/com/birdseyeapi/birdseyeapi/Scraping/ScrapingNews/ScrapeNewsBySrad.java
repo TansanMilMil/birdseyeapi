@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.News.News;
 import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
 import lombok.RequiredArgsConstructor;
@@ -44,14 +44,14 @@ public class ScrapeNewsBySrad implements ScrapingNews {
             Elements newsDescription = newsArea.select("div.body > div");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
-            news.title = newsTitle.text();
-            news.description = newsDescription.html();
-            news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = SOURCE_URL;
-            news.scrapedDateTime = now;
-            news.articleUrl = "https:" + newsTitle.attr("href");
-            news.articleImageUrl = null;
-            news.summarizedText = summarizeNews.summarize(news.articleUrl);
+            news.setTitle(newsTitle.text());
+            news.setDescription(newsDescription.html());
+            news.setSourceBy(SOURCE_BY);
+            news.setScrapedUrl(SOURCE_URL);
+            news.setScrapedDateTime(now);
+            news.setArticleUrl("https:" + newsTitle.attr("href"));
+            news.setArticleImageUrl(null);
+            news.setSummarizedText(summarizeNews.summarize(news.articleUrl));
             newsList.add(news);
 
             log.info("scraped: " + news.title);

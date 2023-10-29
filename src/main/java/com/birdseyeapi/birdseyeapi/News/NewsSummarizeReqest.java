@@ -1,4 +1,4 @@
-package com.birdseyeapi.birdseyeapi;
+package com.birdseyeapi.birdseyeapi.News;
 
 import lombok.Data;
 

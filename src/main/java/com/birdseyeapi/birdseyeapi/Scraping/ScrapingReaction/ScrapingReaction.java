@@ -1,10 +1,9 @@
 package com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.NewsReaction;
+import com.birdseyeapi.birdseyeapi.News.NewsReaction;
 
 public interface ScrapingReaction {
     public abstract String getSourceBy();

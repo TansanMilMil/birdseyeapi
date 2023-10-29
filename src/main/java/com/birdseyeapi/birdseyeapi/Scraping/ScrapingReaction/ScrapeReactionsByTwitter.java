@@ -1,7 +1,5 @@
 package com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction;
 
-import com.birdseyeapi.birdseyeapi.NewsReaction;
-
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
@@ -14,8 +12,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
+
+import com.birdseyeapi.birdseyeapi.News.NewsReaction;
 
 @Slf4j
 public class ScrapeReactionsByTwitter implements ScrapingReaction {
@@ -53,10 +52,10 @@ public class ScrapeReactionsByTwitter implements ScrapingReaction {
                 log.info("-------------------------");
                 log.info(text);
                 NewsReaction reaction = new NewsReaction();
-                reaction.author = "twitter user";
-                reaction.comment = text;
-                reaction.scrapedDateTime = ZonedDateTime.now(ZoneId.of("UTC"));
-                reaction.commentUrl = url;
+                reaction.setAuthor("twitter user");
+                reaction.setComment(text);
+                reaction.setScrapedDateTime(ZonedDateTime.now(ZoneId.of("UTC")));
+                reaction.setCommentUrl(url);
                 reactions.add(reaction);
             }
         } catch (Exception e) {

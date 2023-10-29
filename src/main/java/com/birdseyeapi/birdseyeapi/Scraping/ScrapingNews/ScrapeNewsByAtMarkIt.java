@@ -5,17 +5,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.News;
-import com.birdseyeapi.birdseyeapi.AI.Summarize.AISummarizer;
+import com.birdseyeapi.birdseyeapi.News.News;
 import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
 import lombok.RequiredArgsConstructor;
@@ -49,14 +45,14 @@ public class ScrapeNewsByAtMarkIt implements ScrapingNews {
 
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
-            news.title = newsTitle.text();
-            news.description = newsDescription.text();
-            news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = SOURCE_URL;
-            news.scrapedDateTime = now;
-            news.articleUrl = newsTitle.select("a").attr("href");
-            news.articleImageUrl = newsImage.attr("src");
-            news.summarizedText = summarizeNews.summarize(news.articleUrl);
+            news.setTitle(newsTitle.text());
+            news.setDescription(newsDescription.text());
+            news.setSourceBy(SOURCE_BY);
+            news.setScrapedUrl(SOURCE_URL);
+            news.setScrapedDateTime(now);
+            news.setArticleUrl(newsTitle.select("a").attr("href"));
+            news.setArticleImageUrl(newsImage.attr("src"));
+            news.setSummarizedText(summarizeNews.summarize(news.articleUrl));
             newsList.add(news);
 
             log.info("scraped: " + news.title);

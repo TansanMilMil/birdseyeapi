@@ -3,7 +3,7 @@ package com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews;
 import java.io.IOException;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.News.News;
 
 public interface ScrapingNews {
     public abstract String getSourceBy();

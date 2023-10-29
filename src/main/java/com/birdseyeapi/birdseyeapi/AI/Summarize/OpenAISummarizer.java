@@ -13,6 +13,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatMessageRole;
+import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatMessage;
+import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatRequest;
+import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
@@ -30,7 +34,7 @@ public class OpenAISummarizer implements AISummarizer {
 
     @Override
     public String summarize(String text) throws IOException, InterruptedException {
-        List<OpenAISummarizeMessage> messages = new ArrayList<>();
+        List<APIChatMessage> messages = new ArrayList<>();
         // There is 4097 tokens limit when using gpt-3.5-turbo, thus a prompt must be short.
         String prompt = String.format("""
             次の文章を日本語で要約してください。
@@ -41,8 +45,8 @@ public class OpenAISummarizer implements AISummarizer {
         if (prompt.length() > MaxPromptTextLength) {
             prompt = prompt.substring(0, MaxPromptTextLength);
         }
-        messages.add(new OpenAISummarizeMessage(OpenAIMessageRole.User.GetStrName(), prompt));
-        OpenAISummarizeRequest reqBody = new OpenAISummarizeRequest(OpenAIModel, messages);
+        messages.add(new APIChatMessage(APIChatMessageRole.User.GetStrName(), prompt));
+        APIChatRequest reqBody = new APIChatRequest(OpenAIModel, messages);
 
         final HttpRequest req = HttpRequest
             .newBuilder(URI.create(OpenAIEndpoint))
@@ -52,7 +56,7 @@ public class OpenAISummarizer implements AISummarizer {
             .build();
         
         final HttpResponse<String> res = httpClient.send(req, BodyHandlers.ofString());
-        final OpenAISummarizeResult result = mapper.readValue(res.body(), OpenAISummarizeResult.class);
+        final APIChatResponse result = mapper.readValue(res.body(), APIChatResponse.class);
         return result.getChoices().get(0).getMessage().getContent();
     }
     

@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.News.News;
 import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
 import lombok.RequiredArgsConstructor;
@@ -43,18 +43,18 @@ public class ScrapeNewsByCloudWatchImpress implements ScrapingNews {
             Elements newsTitle = newsArea.select("p.title > a");
             ZonedDateTime now = ZonedDateTime.now(ZoneId.of("UTC"));
             News news = new News();
-            news.title = newsTitle.text();
-            news.description = null;
-            news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = SOURCE_URL;
-            news.scrapedDateTime = now;
-            news.articleUrl = newsTitle.attr("href");
+            news.setTitle(newsTitle.text());
+            news.setDescription(null);
+            news.setSourceBy(SOURCE_BY);
+            news.setScrapedUrl(SOURCE_URL);
+            news.setScrapedDateTime(now);
+            news.setArticleUrl(newsTitle.attr("href"));
             // CloudWatchImpress URL sometimes has protocol string.
             if (!news.articleUrl.matches("^https:\\/\\/.*")) {
-                news.articleUrl = SOURCE_URL + news.articleUrl;
+                news.setArticleUrl(SOURCE_URL + news.articleUrl);
             }
-            news.articleImageUrl = null;
-            news.summarizedText = summarizeNews.summarize(news.articleUrl);
+            news.setArticleImageUrl(null);
+            news.setSummarizedText(summarizeNews.summarize(news.articleUrl));
             newsList.add(news);
 
             log.info("scraped: " + news.title);

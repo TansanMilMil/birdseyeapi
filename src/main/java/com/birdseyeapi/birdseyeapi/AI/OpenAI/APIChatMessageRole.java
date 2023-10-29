@@ -1,12 +1,12 @@
-package com.birdseyeapi.birdseyeapi.AI.Summarize;
+package com.birdseyeapi.birdseyeapi.AI.OpenAI;
 
-public enum OpenAIMessageRole {
+public enum APIChatMessageRole {
     System("system"),
     User("user");
 
     private final String strName;
 
-    private OpenAIMessageRole(String strName) {
+    private APIChatMessageRole(String strName) {
         this.strName = strName;
     }
 

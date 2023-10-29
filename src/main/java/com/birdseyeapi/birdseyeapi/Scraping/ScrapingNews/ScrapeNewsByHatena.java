@@ -12,7 +12,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.birdseyeapi.birdseyeapi.News;
+import com.birdseyeapi.birdseyeapi.News.News;
 import com.birdseyeapi.birdseyeapi.Scraping.SummarizeNews.SummarizeNews;
 
 import lombok.RequiredArgsConstructor;
@@ -55,14 +55,14 @@ public class ScrapeNewsByHatena implements ScrapingNews {
                 }
             }
             News news = new News();
-            news.title = newsTitle.text();
-            news.description = description;
-            news.sourceBy = SOURCE_BY;
-            news.scrapedUrl = SOURCE_URL;
-            news.scrapedDateTime = now;
-            news.articleUrl = linkHref;
-            news.articleImageUrl = null;
-            news.summarizedText = summarizeNews.summarize(news.articleUrl);
+            news.setTitle(newsTitle.text());
+            news.setDescription(description);
+            news.setSourceBy(SOURCE_BY);
+            news.setScrapedUrl(SOURCE_URL);
+            news.setScrapedDateTime(now);
+            news.setArticleUrl(linkHref);
+            news.setArticleImageUrl(null);
+            news.setSummarizedText(summarizeNews.summarize(news.articleUrl));
             newsList.add(news);
 
             log.info("scraped: " + news.title);
