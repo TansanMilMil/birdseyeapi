@@ -16,22 +16,22 @@ import lombok.Data;
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
-    public long scrapingUnitId;
+    private long id;
+    private long scrapingUnitId;
     @Column(length = 200)
-    public String title;
+    private String title;
     @Column(columnDefinition = "TEXT")
-    public String description;
+    private String description;
     @Column(columnDefinition = "TEXT")
-    public String summarizedText;
-    public String sourceBy;
+    private String summarizedText;
+    private String sourceBy;
     @Column(columnDefinition = "TEXT")
-    public String scrapedUrl;
-    public ZonedDateTime scrapedDateTime;
+    private String scrapedUrl;
+    private ZonedDateTime scrapedDateTime;
     @Column(columnDefinition = "TEXT")
-    public String articleUrl;
+    private String articleUrl;
     @Column(columnDefinition = "TEXT")
-    public String articleImageUrl;
+    private String articleImageUrl;
     @OneToMany(mappedBy = "news")
     List<NewsReaction> reactions;
 }

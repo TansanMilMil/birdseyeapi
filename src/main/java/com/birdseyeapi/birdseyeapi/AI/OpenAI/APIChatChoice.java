@@ -1,10 +1,14 @@
 package com.birdseyeapi.birdseyeapi.AI.OpenAI;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class APIChatChoice {
-    public int index;
-    public APIChatMessage message;
-    public String finish_reason;
+    private int index;
+    private APIChatMessage message;
+    private String finish_reason;
 }

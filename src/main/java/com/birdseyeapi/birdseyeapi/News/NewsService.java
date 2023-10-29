@@ -81,12 +81,19 @@ public class NewsService {
     }
 
     public List<NewsReaction> getNewsReactions(long id) {
-        List<News> result = newsReactionRepository.selectNewsReactionsById(id);
-        if (result.size() == 0) {
+        List<NewsReaction> reactions = newsReactionRepository.selectNewsReactionsById(id)
+            .stream()
+            .map(reaction -> {
+                // avoid cross reference on response json
+                reaction.setNews(null);
+                return reaction;
+            })
+            .toList();
+        if (reactions.size() == 0) {
             log.info("no news!");
             return new ArrayList<NewsReaction>();
         } else {
-            return result.get(0).reactions;
+            return reactions;
         }
     }
 
@@ -96,7 +103,11 @@ public class NewsService {
 
         Long maxScrapingUnitId = newsReactionRepository.findMaxScrapingUnitId();
         newsList = newsList.stream().map(news -> {
-            news.scrapingUnitId = maxScrapingUnitId == null ? 1 : maxScrapingUnitId + 1;
+            if (maxScrapingUnitId == null) {
+                news.setScrapingUnitId(1);
+            } else { 
+                news.setScrapingUnitId(maxScrapingUnitId + 1);
+            }
             return news;
         }).toList();
         newsRepository.saveAll(newsList);
@@ -106,7 +117,7 @@ public class NewsService {
     public boolean scrapeNewsReactions() throws InterruptedException, MalformedURLException {
         Long maxScrapingUnitId = newsReactionRepository.findMaxScrapingUnitId();
 
-        List<News> newsList = newsReactionRepository.selectNewsReactionsByScrapingUnitId(maxScrapingUnitId);
+        List<News> newsList = newsReactionRepository.selectNewsByScrapingUnitId(maxScrapingUnitId);
 
         if (newsList.size() == 0) {
             log.info("no news!");
@@ -114,15 +125,15 @@ public class NewsService {
         }
 
         for (News news : newsList) {
-            saveReactions(news);
+            scrapeAndSaveReactions(news);
         }
         return true;
     }
 
     @Transactional
-    private void saveReactions(News news) throws MalformedURLException, InterruptedException {
-        log.info("news.id:" + news.id);
-        if (news.reactions != null && news.reactions.size() >= 1) {
+    private void scrapeAndSaveReactions(News news) throws MalformedURLException, InterruptedException {
+        log.info("news.id:" + news.getId());
+        if (news.getReactions() != null && news.getReactions().size() >= 1) {
             log.info("exist reactions in database.");
             return;
         }

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class APIChatMessage {
-    public String role;
-    public String content;
+    private String role;
+    private String content;
 }

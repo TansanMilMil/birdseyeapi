@@ -1,8 +1,10 @@
 package com.birdseyeapi.birdseyeapi.News;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
+@AllArgsConstructor
 public class NewsSummarizeReqest {
-    public String text;
+    private String text;
 }

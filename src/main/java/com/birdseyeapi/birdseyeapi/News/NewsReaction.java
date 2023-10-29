@@ -14,14 +14,14 @@ import lombok.Data;
 public class NewsReaction {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public long id;
+    private long id;
     @Column(length = 200)
-    public String author;
+    private String author;
     @Column(columnDefinition = "TEXT")
-    public String comment;
-    public ZonedDateTime scrapedDateTime;
+    private String comment;
+    private ZonedDateTime scrapedDateTime;
     @ManyToOne
-    public News news;
+    private News news;
     @Column(columnDefinition = "TEXT")
-    public String commentUrl;
+    private String commentUrl;
 }

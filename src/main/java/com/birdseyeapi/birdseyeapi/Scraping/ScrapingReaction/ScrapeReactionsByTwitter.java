@@ -1,5 +1,6 @@
 package com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
@@ -13,10 +14,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.springframework.stereotype.Component;
 
 import com.birdseyeapi.birdseyeapi.News.NewsReaction;
 
 @Slf4j
+@Component
+@RequiredArgsConstructor
 public class ScrapeReactionsByTwitter implements ScrapingReaction {
     private final String SOURCE_BY = "twitter";
     private final String SOURCE_URL = "https://twitter.com/search?src=typed_query&f=liv&q=";
@@ -42,7 +46,7 @@ public class ScrapeReactionsByTwitter implements ScrapingReaction {
             log.info("request completed.");
 
             List<WebElement> articles = driver.findElements(By.cssSelector(
-                    "#react-root > div > div > div > main > div > div > div > div > div > div:nth-child(3) > div > section > div > div > div > div > div > article"));
+                    "article div[data-testid=\"tweetText\"]"));
             log.info("articles.size(): " + articles.size());
             for (WebElement article : articles) {
                 String text = article.getText();

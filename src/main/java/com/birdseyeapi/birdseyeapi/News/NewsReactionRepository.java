@@ -38,11 +38,10 @@ public interface NewsReactionRepository extends JpaRepository<NewsReaction, Inte
 
     @Query("""
         SELECT n
-        FROM News n
-        LEFT JOIN FETCH n.reactions
-        WHERE n.id = :id
+        FROM NewsReaction n
+        WHERE n.news.id = :id
     """)
-    List<News> selectNewsReactionsById(@Param("id") long id);
+    List<NewsReaction> selectNewsReactionsById(@Param("id") long id);
 
     @Query("""
         SELECT n
@@ -50,5 +49,5 @@ public interface NewsReactionRepository extends JpaRepository<NewsReaction, Inte
         LEFT JOIN FETCH n.reactions
         WHERE n.scrapingUnitId = :scrapingUnitId
     """)
-    List<News> selectNewsReactionsByScrapingUnitId(@Param("scrapingUnitId") long scrapingUnitId);
+    List<News> selectNewsByScrapingUnitId(@Param("scrapingUnitId") long scrapingUnitId);
 }

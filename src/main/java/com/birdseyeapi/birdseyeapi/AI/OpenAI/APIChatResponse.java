@@ -2,14 +2,18 @@ package com.birdseyeapi.birdseyeapi.AI.OpenAI;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class APIChatResponse {
-    public String id;
-    public String object;
-    public int created;
-    public String model;
-    public List<APIChatChoice> choices;
-    public APIChatUsage usage;
+    private String id;
+    private String object;
+    private int created;
+    private String model;
+    private List<APIChatChoice> choices;
+    private APIChatUsage usage;
 }

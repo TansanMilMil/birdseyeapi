@@ -16,7 +16,6 @@ import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZDNet;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapeNewsByZenn;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingNews.ScrapingNews;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByHatena;
-import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapeReactionsByTwitter;
 import com.birdseyeapi.birdseyeapi.Scraping.ScrapingReaction.ScrapingReaction;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +32,8 @@ public class SiteScraping {
     private final ScrapeNewsBySrad scrapeNewsBySrad;
     // private final ScrapeNewsByGigazine scrapeNewsByGigazine;
     private final ScrapeNewsByZDNet scrapeNewsByZDNet;
+    // private final ScrapeReactionsByTwitter scrapeReactionsByTwitter;
+    private final ScrapeReactionsByHatena scrapeReactionsByHatena;
 
     public List<News> scrapeNews() {
         List<ScrapingNews> targets = List.of(
@@ -47,10 +48,6 @@ public class SiteScraping {
         for (ScrapingNews target : targets) {
             try {
                 List<News> list = target.extractNews();
-                // Sometimes, There are too many news.
-                if (list.size() > 10) {
-                    list = list.subList(0, 10);
-                }
                 log.info(target.getSourceBy() + " -> scraped article: " + list.size());
                 newsList.addAll(list);
             } catch (Exception e) {
@@ -65,12 +62,12 @@ public class SiteScraping {
 
     public List<NewsReaction> scrapeReactions(News news) throws MalformedURLException, InterruptedException {
         List<ScrapingReaction> targets = List.of(
-                new ScrapeReactionsByTwitter(),
-                new ScrapeReactionsByHatena());
+                // scrapeReactionsByTwitter,
+                scrapeReactionsByHatena);
         List<NewsReaction> reactions = new ArrayList<>();
 
         for (ScrapingReaction target : targets) {
-            reactions.addAll(target.extractReactions(news.articleUrl, news.title));
+            reactions.addAll(target.extractReactions(news.getArticleUrl(), news.getTitle()));
         }
 
         return reactions;
