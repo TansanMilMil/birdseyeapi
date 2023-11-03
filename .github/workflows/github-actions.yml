@@ -3,13 +3,18 @@ on:
   push:
     branches:
       - "main"
+
+env:
+  VENUS_HOME: /home/alma
+
 jobs:
-  deploy-venus:
+  build:
     runs-on: jupiter
     steps:
       - name: rm old files(for remove files root user created)
         run: |
           sudo rm -rf ./.gradle
+          sudo rm -rf ./build
 
       - name: checkout
         uses: actions/checkout@v4
@@ -17,32 +22,47 @@ jobs:
       - name: build jar
         run: |
           docker compose -f ./docker-compose.ci.yml up -d java
-          docker compose exec java ./gradlew build
+          docker compose exec java ./gradlew bootJar
 
       - name: docker compose teardown
         run: |
           docker compose down
         if: ${{ always() }}
 
-      - name: scp files to venus
+  stop-server:
+    runs-on: jupiter
+    needs: build
+    steps:
+      - name: stop birdseyeapi
         run: |
-          JAR_FILE_PATH=`find ./build/libs/ -name '*.jar' | head -n 1`
-          JAR_FILE=`basename $JAR_FILE_PATH`
-
-          ssh $VENUS_SSH_HOST rm -rf ~/birdseyeapi/dist
-          ssh $VENUS_SSH_HOST mkdir ~/birdseyeapi/dist
-
-          scp $JAR_FILE_PATH $VENUS_SSH_HOST:~/birdseyeapi/dist/$JAR_FILE
-          scp ./docker-compose.yml $VENUS_SSH_HOST:~/birdseyeapi/docker-compose.yml
-          scp ./Dockerfile $VENUS_SSH_HOST:~/birdseyeapi/Dockerfile
-          scp ./execute-jar.sh $VENUS_SSH_HOST:~/birdseyeapi/execute-jar.sh
-          scp ./java-entrypoint.sh $VENUS_SSH_HOST:~/birdseyeapi/java-entrypoint.sh
+          ssh $VENUS_SSH_HOST docker compose -f $VENUS_HOME/birdseyeapi/docker-compose.yml down
         env:
           VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
 
-      - name: restart birdseyeapi
+  deploy:
+    runs-on: jupiter
+    needs: stop-server
+    steps:
+      - name: scp files to venus
         run: |
-          ssh $VENUS_SSH_HOST docker compose -f ~/birdseyeapi/docker-compose.yml down
-          ssh $VENUS_SSH_HOST docker compose up -d
+          tar cvfz ./build.tgz ./build/
+          scp ./build.tgz $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/build.tgz
+          ssh $VENUS_SSH_HOST tar xvfz $VENUS_HOME/birdseyeapi/build.tgz -C $VENUS_HOME/birdseyeapi
+
+          scp ./docker-compose.yml $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/docker-compose.yml
+          scp ./Dockerfile $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/Dockerfile
+          scp ./execute-jar.sh $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/execute-jar.sh
+          scp ./java-entrypoint.sh $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/java-entrypoint.sh
+          scp -r ./nginx $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/
+        env:
+          VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
+
+  start-server:
+    runs-on: jupiter
+    needs: deploy
+    steps:
+      - name: start birdseyeapi
+        run: |
+          ssh $VENUS_SSH_HOST docker compose -f $VENUS_HOME/birdseyeapi/docker-compose.yml up -d
         env:
           VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
