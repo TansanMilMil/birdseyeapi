@@ -23,6 +23,13 @@ jobs:
         run: |
           docker compose -f ./docker-compose.ci.yml up -d java
           docker compose exec java ./gradlew bootJar
+          tar cvfz ./build.tgz ./build/
+
+      - name: upload-artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build.tgz
+          path: build.tgz
 
       - name: docker compose teardown
         run: |
@@ -43,9 +50,21 @@ jobs:
     runs-on: jupiter
     needs: stop-server
     steps:
+      - name: rm old files(for remove files root user created)
+        run: |
+          sudo rm -rf ./.gradle
+          sudo rm -rf ./build
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: download-artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build.tgz
+
       - name: scp files to venus
         run: |
-          tar cvfz ./build.tgz ./build/
           scp ./build.tgz $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/build.tgz
           ssh $VENUS_SSH_HOST tar xvfz $VENUS_HOME/birdseyeapi/build.tgz -C $VENUS_HOME/birdseyeapi
 
