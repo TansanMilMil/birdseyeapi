@@ -7,9 +7,9 @@ jobs:
   deploy-venus:
     runs-on: jupiter
     steps:
-      - name: rm .gradle
+      - name: rm old files(for remove files root user created)
         run: |
-          ls | xargs sudo rm -rf ./.gradle
+          ls | xargs sudo rm -rf
 
       - name: checkout
         uses: actions/checkout@v4
@@ -29,7 +29,10 @@ jobs:
           JAR_FILE_PATH=`find ./build/libs/ -name '*.jar' | head -n 1`
           JAR_FILE=`basename $JAR_FILE_PATH`
 
-          scp $JAR_FILE_PATH $VENUS_SSH_HOST:~/birdseyeapi/$JAR_FILE
+          ssh $VENUS_SSH_HOST rm -rf ~/birdseyeapi/dist
+          ssh $VENUS_SSH_HOST mkdir ~/birdseyeapi/dist
+
+          scp $JAR_FILE_PATH $VENUS_SSH_HOST:~/birdseyeapi/dist/$JAR_FILE
           scp ./docker-compose.yml $VENUS_SSH_HOST:~/birdseyeapi/docker-compose.yml
           scp ./Dockerfile $VENUS_SSH_HOST:~/birdseyeapi/Dockerfile
           scp ./execute-jar.sh $VENUS_SSH_HOST:~/birdseyeapi/execute-jar.sh
@@ -39,7 +42,7 @@ jobs:
 
       - name: restart birdseyeapi
         run: |
-          ssh $VENUS_SSH_HOST docker compose down
+          ssh $VENUS_SSH_HOST docker compose -f ~/birdseyeapi/docker-compose.yml down
           ssh $VENUS_SSH_HOST docker compose up -d
         env:
           VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
