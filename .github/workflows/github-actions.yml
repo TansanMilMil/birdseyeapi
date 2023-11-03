@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: rm .gradle
         run: |
-          sudo rm -rf ./.gradle
+          ls | xargs sudo rm -rf ./.gradle
 
       - name: checkout
         uses: actions/checkout@v4
