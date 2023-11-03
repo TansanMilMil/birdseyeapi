@@ -12,7 +12,5 @@ services:
       - /etc/group:/etc/group:ro
     restart: always
     working_dir: /project
-    environment:
-      - GRADLE_USER_HOME=/project/.gradle
     # root userでビルドするとroot所有のディレクトリが生成され、actions/checkoutでそれらのディレクトリ等が消せずにエラーになってしまう
     user: 1000:1000
