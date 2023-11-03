@@ -14,13 +14,6 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: generate SSH key
-        run: |
-          mkdir -p ~/.ssh && chmod 700 ~/.ssh
-          echo "$VENUS_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
-        env:
-          VENUS_SSH_PRIVATE_KEY: ${{ secrets.VENUS_SSH_PRIVATE_KEY }}
-
       - name: build jar
         run: |
           docker compose -f ./docker-compose.ci.yml up -d java
