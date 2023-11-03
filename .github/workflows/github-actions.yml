@@ -9,7 +9,7 @@ jobs:
     steps:
       - name: rm old files(for remove files root user created)
         run: |
-          ls | xargs sudo rm -rf
+          sudo rm -rf ./.gradle
 
       - name: checkout
         uses: actions/checkout@v4
