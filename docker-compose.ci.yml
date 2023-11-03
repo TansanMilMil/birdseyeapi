@@ -1,0 +1,12 @@
+version: "3"
+services:
+  java:
+    build: .
+    container_name: birdseyeapi_java
+    ports:
+      - 8080:8080
+    tty: true
+    volumes:
+      - .:/project
+    restart: always
+    working_dir: /project

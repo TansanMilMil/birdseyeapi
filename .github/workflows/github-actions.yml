@@ -19,7 +19,7 @@ jobs:
 
       - name: build jar
         run: |
-          docker compose up -d java
+          docker compose -f ./docker-compose.ci.yml up -d java
           docker compose exec -T java ./gradlew build
 
       - name: scp files to venus
