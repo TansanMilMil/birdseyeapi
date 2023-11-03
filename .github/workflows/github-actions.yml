@@ -20,7 +20,12 @@ jobs:
       - name: build jar
         run: |
           docker compose -f ./docker-compose.ci.yml up -d java
-          docker compose exec -T java ./gradlew build
+          docker compose exec java ./gradlew build
+
+      - name: docker compose teardown
+        run: |
+          docker compose down
+        if: ${{ always() }}
 
       - name: scp files to venus
         run: |

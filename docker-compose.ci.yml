@@ -8,5 +8,9 @@ services:
     tty: true
     volumes:
       - .:/project
+      - /etc/passwd:/etc/passwd:ro
+      - /etc/group:/etc/group:ro
     restart: always
     working_dir: /project
+    # root userでビルドするとroot所有のディレクトリが生成され、actions/checkoutでそれらのディレクトリ等が消せずにエラーになってしまう
+    user: debian
