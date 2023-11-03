@@ -16,8 +16,8 @@ jobs:
 
       - name: generate SSH key
         run: |
-          mkdir -p .ssh && chmod 700 .ssh
-          echo "$VENUS_SSH_PRIVATE_KEY" > .ssh/id_rsa && chmod 600 .ssh/id_rsa
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          echo "$VENUS_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa && chmod 600 ~/.ssh/id_rsa
         env:
           VENUS_SSH_PRIVATE_KEY: ${{ secrets.VENUS_SSH_PRIVATE_KEY }}
 
