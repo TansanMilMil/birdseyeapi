@@ -37,7 +37,6 @@ out/
 .vscode/
 *.env
 
-application.properties
 !.gitkeep
 nginx/log/*
 deploy-logs/*
