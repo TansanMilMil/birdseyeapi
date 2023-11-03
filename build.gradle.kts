@@ -1,13 +1,13 @@
 plugins {
-	id("org.springframework.boot") version "3.0.2"
-	id("io.spring.dependency-management") version "1.1.0"
+	id("org.springframework.boot") version "3.1.5"
+	id("io.spring.dependency-management") version "1.1.3"
 	id("java")
 	id("application")
 }
 
 group = "com.birdseyeapi"
-version = "1.6.0"
-java.sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
+version = "1.7.0"
+java.sourceCompatibility = org.gradle.api.JavaVersion.VERSION_20
 
 configurations {
 	compileOnly {
@@ -22,22 +22,22 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("com.fasterxml.jackson.core:jackson-core:2.13.2")
-	implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2")
-	implementation("com.fasterxml.jackson.core:jackson-annotations:2.13.2")
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
-	implementation(platform("software.amazon.awssdk:bom:2.17.155"))
-	implementation("software.amazon.awssdk:s3")
-	implementation("com.rometools:rome:1.18.0")
-	implementation("org.jsoup:jsoup:1.14.3")
-  	runtimeOnly("mysql:mysql-connector-java")
-	implementation("org.seleniumhq.selenium:selenium-java:4.8.0")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("com.fasterxml.jackson.core:jackson-core:2.15.3")
+	implementation("com.fasterxml.jackson.core:jackson-databind:2.15.3")
+	implementation("com.fasterxml.jackson.core:jackson-annotations:2.15.3")
+	compileOnly("org.projectlombok:lombok:1.18.30")
+	annotationProcessor("org.projectlombok:lombok:1.18.30")
+	implementation(platform("software.amazon.awssdk:bom:2.21.12"))
+	implementation("software.amazon.awssdk:s3:2.21.13")
+	implementation("com.rometools:rome:2.1.0")
+	implementation("org.jsoup:jsoup:1.16.2")
+  	runtimeOnly("mysql:mysql-connector-java:8.0.33")
+	implementation("org.seleniumhq.selenium:selenium-java:4.15.0")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:3.1.5")
 }
 
 application {
-	mainClassName = "com.birdseyeapi.birdseyeapi.BirdseyeapiApplication"
+	mainClass.set("com.birdseyeapi.birdseyeapi.BirdseyeapiApplication")
 }
 
 tasks.withType<Test> {

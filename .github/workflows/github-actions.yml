@@ -69,7 +69,6 @@ jobs:
           ssh $VENUS_SSH_HOST tar xvfz $VENUS_HOME/birdseyeapi/build.tgz -C $VENUS_HOME/birdseyeapi
 
           scp ./docker-compose.yml $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/docker-compose.yml
-          scp ./Dockerfile $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/Dockerfile
           scp ./execute-jar.sh $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/execute-jar.sh
           scp ./java-entrypoint.sh $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/java-entrypoint.sh
           scp -r ./nginx $VENUS_SSH_HOST:$VENUS_HOME/birdseyeapi/
