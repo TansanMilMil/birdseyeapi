@@ -22,6 +22,11 @@ jobs:
           docker compose -f ./docker-compose.ci.yml up -d java
           docker compose exec java ./gradlew build
 
+      - name: chown .gradle
+        run: |
+          sudo chown -R 1000 ./.gradle
+        if: ${{ always() }}
+
       - name: docker compose teardown
         run: |
           docker compose down
