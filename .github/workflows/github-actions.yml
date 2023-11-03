@@ -5,7 +5,7 @@ on:
       - "main"
 jobs:
   deploy-venus:
-    runs-on: jupiter
+    runs-on: ubuntu-22.04
     steps:
       - name: checkout
         uses: actions/checkout@v4
