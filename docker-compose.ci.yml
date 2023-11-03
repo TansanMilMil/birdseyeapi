@@ -13,4 +13,4 @@ services:
     restart: always
     working_dir: /project
     # root userでビルドするとroot所有のディレクトリが生成され、actions/checkoutでそれらのディレクトリ等が消せずにエラーになってしまう
-    user: debian
+    user: 1000:1000
