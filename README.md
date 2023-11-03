@@ -5,7 +5,8 @@ Please add `.env` on root path.
 Example
 
 ```sh
-BIRDSEYEAPI_EXECUTION_MODE=DEBUG
+BIRDSEYEAPI_EXECUTION_MODE={PRODUCTION|DEBUG}
+OPENAI_API_KEY=*****
 ```
 
 `BIRDSEYEAPI_EXECUTION_MODE` accept `DEBUG` or `PRODUCTION`.
@@ -28,4 +29,4 @@ CREATE DATABASE IF NOT EXISTS birds_eye;
 
 # Deploy
 
-TBD...
+GitHub Actions will deploy when pushed on main branch.

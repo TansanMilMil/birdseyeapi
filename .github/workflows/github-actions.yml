@@ -1,0 +1,43 @@
+name: GitHub Actions
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy-venus:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: generate SSH key
+        run: |
+          mkdir -p .ssh && chmod 700 .ssh
+          echo "$VENUS_SSH_PRIVATE_KEY" > .ssh/id_rsa && chmod 600 .ssh/id_rsa
+        env:
+          VENUS_SSH_PRIVATE_KEY: ${{ secrets.VENUS_SSH_PRIVATE_KEY }}
+
+      - name: build jar
+        run: |
+          docker compose up -d
+          docker compose exec -T java ./gradlew build
+
+      - name: scp files to venus
+        run: |
+          JAR_FILE_PATH=`find ./build/libs/ -name '*.jar' | head -n 1`
+          JAR_FILE=`basename $JAR_FILE_PATH`
+
+          scp $JAR_FILE_PATH $VENUS_SSH_HOST:~/birdseyeapi/$JAR_FILE
+          scp ./docker-compose.yml $VENUS_SSH_HOST:~/birdseyeapi/docker-compose.yml
+          scp ./Dockerfile $VENUS_SSH_HOST:~/birdseyeapi/Dockerfile
+          scp ./execute-jar.sh $VENUS_SSH_HOST:~/birdseyeapi/execute-jar.sh
+          scp ./java-entrypoint.sh $VENUS_SSH_HOST:~/birdseyeapi/java-entrypoint.sh
+        env:
+          VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
+
+      - name: restart birdseyeapi
+        run: |
+          ssh $VENUS_SSH_HOST docker compose down
+          ssh $VENUS_SSH_HOST docker compose up -d
+        env:
+          VENUS_SSH_HOST: ${{ secrets.VENUS_SSH_HOST }}
