@@ -19,6 +19,9 @@ import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatRequest;
 import com.birdseyeapi.birdseyeapi.AI.OpenAI.APIChatResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class OpenAISummarizer implements AISummarizer {
     private static final String OpenAIEndpoint = System.getenv("OPENAI_CHAT_ENDPOINT");
@@ -54,9 +57,15 @@ public class OpenAISummarizer implements AISummarizer {
             .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + OpenAIAPIKey)
             .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reqBody)))
             .build();
+
+        log.info("textLength: " + text.length());
+        log.info("requestHeaders: " + req.headers().toString());
         
         final HttpResponse<String> res = httpClient.send(req, BodyHandlers.ofString());
-        final APIChatResponse result = mapper.readValue(res.body(), APIChatResponse.class);
+        String resBody = res.body();
+        log.info("responseBodyLength: " + resBody.length());
+
+        final APIChatResponse result = mapper.readValue(resBody, APIChatResponse.class);
         return result.getChoices().get(0).getMessage().getContent();
     }
     
