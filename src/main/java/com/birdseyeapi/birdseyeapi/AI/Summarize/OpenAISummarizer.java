@@ -58,12 +58,10 @@ public class OpenAISummarizer implements AISummarizer {
             .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reqBody)))
             .build();
 
-        log.info("textLength: " + text.length());
-        log.info("requestHeaders: " + req.headers().toString());
+        log.info("textBeforeSummarizedLength: " + text.length());
         
         final HttpResponse<String> res = httpClient.send(req, BodyHandlers.ofString());
         String resBody = res.body();
-        log.info("responseBodyLength: " + resBody.length());
 
         final APIChatResponse result = mapper.readValue(resBody, APIChatResponse.class);
         return result.getChoices().get(0).getMessage().getContent();

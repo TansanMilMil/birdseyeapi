@@ -41,3 +41,4 @@ out/
 nginx/log/*
 deploy-logs/*
 archive/
+build.tgz

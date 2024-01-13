@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -36,7 +37,7 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
         List<NewsReaction> reactions = new ArrayList<>();
 
         FirefoxOptions browserOptions = new FirefoxOptions();
-        WebDriver driver = new RemoteWebDriver(new URL(System.getenv("SELENIUM_URL")), browserOptions);
+        WebDriver driver = new RemoteWebDriver(URI.create(System.getenv("SELENIUM_URL")).toURL(), browserOptions);
         try {
             log.info("selenium is ready.");
             url = url.replace("http://", "");
@@ -56,7 +57,7 @@ public class ScrapeReactionsByHatena implements ScrapingReaction {
                     continue;
                 }
                 log.info("-------------------------");
-                log.info(text);
+                log.info("textLength: " + text.length());
                 NewsReaction reaction = new NewsReaction();
                 reaction.setAuthor("hatena user");
                 reaction.setComment(text);

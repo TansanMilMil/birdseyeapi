@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 
+import com.birdseyeapi.birdseyeapi.Trends.TrendsService;
 import com.rometools.rome.io.FeedException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("news")
 public class NewsController {
     private final NewsService newsService;
+    private final TrendsService trendsService;
 
     @GetMapping("/today-news")
     public List<NewsWithReactionCount> getTodayNews() throws IOException {
@@ -28,7 +32,7 @@ public class NewsController {
 
     @GetMapping("/trends")
     public List<News> getTrends() throws IllegalArgumentException, MalformedURLException, FeedException, IOException {
-        List<News> newsList = newsService.getTrends();
+        List<News> newsList = trendsService.getTrends();
         return newsList;
     }
 
@@ -42,6 +46,7 @@ public class NewsController {
     public boolean scrape() throws IOException, InterruptedException {
         newsService.scrape();
         newsService.scrapeNewsReactions();
+        log.info("-------------------------- scraping finished! --------------------------");
         return true;
     }
 }
