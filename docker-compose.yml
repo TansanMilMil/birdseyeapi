@@ -1,7 +1,6 @@
-version: "3"
 services:
   selenium:
-    image: selenium/standalone-firefox:123.0
+    image: selenium/standalone-firefox:126.0
     container_name: birdseyeapi_selenium
     ports:
       - 4444
@@ -9,7 +8,7 @@ services:
       - /dev/shm:/dev/shm
     restart: always
   java:
-    image: openjdk:23-bullseye
+    image: openjdk:22-bullseye
     container_name: birdseyeapi_java
     ports:
       - 8080:8080
@@ -25,7 +24,7 @@ services:
       - OPENAI_API_KEY
     entrypoint: ./java-entrypoint.sh
   nginx:
-    image: nginx:1.25.4
+    image: nginx:1.27.0
     container_name: birdseyeapi_nginx
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -38,7 +37,7 @@ services:
     depends_on:
       - java
   mysql:
-    image: mysql:8.3.0
+    image: mysql:8.4.0
     container_name: birdseyeapi_mysql
     volumes:
       - db-store:/var/lib/mysql
