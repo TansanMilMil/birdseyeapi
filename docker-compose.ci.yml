@@ -1,6 +1,7 @@
+version: "3"
 services:
   java:
-    image: openjdk:22-bullseye
+    image: openjdk:20-bullseye
     container_name: birdseyeapi_java
     ports:
       - 8080:8080
