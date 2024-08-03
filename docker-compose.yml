@@ -9,7 +9,7 @@ services:
       - /dev/shm:/dev/shm
     restart: always
   java:
-    image: openjdk:23-bullseye
+    image: openjdk:20-bullseye
     container_name: birdseyeapi_java
     ports:
       - 8080:8080

@@ -2,5 +2,5 @@
 
 cd `dirname $0`
 
-./gradlew build && \
-./gradlew run
+./gradlew build --stacktrace && \
+./gradlew run --stacktrace
