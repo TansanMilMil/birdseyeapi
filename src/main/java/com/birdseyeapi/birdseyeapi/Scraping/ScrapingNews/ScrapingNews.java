@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @SuperBuilder
 public abstract class ScrapingNews {
     private final SummarizeNews summarizeNews;
+    private final int MAX_NEWS = 10;
 
     public abstract String getSourceBy();
 
@@ -34,11 +35,11 @@ public abstract class ScrapingNews {
         log.info("scraping... -> " + getSourceBy());
         List<Element> newsAreaList = getDomElements().stream().toList();
         // Sometimes, There are too many news.
-        if (newsAreaList.size() > 10) {
-            newsAreaList = newsAreaList.subList(0, 10);
+        if (newsAreaList.size() > MAX_NEWS) {
+            newsAreaList = newsAreaList.subList(0, MAX_NEWS);
         }
 
-        List<News> newsList = new ArrayList<News>();
+        final List<News> newsList = new ArrayList<News>();
         for (Element newsArea : newsAreaList) {
             News news = generateNews(newsArea);
             news = addSummarizedText(news);

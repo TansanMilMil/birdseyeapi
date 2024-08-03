@@ -29,7 +29,7 @@ public class SiteScraping {
     private final ScrapeNewsByCloudWatchImpress scrapeNewsByCloudWatchImpress;
     private final ScrapeNewsByHatena scrapeNewsByHatena;
     private final ScrapeNewsByZenn scrapeNewsByZenn;
-    private final ScrapeNewsBySrad scrapeNewsBySrad;
+    // private final ScrapeNewsBySrad scrapeNewsBySrad;
     // private final ScrapeNewsByGigazine scrapeNewsByGigazine;
     private final ScrapeNewsByZDNet scrapeNewsByZDNet;
     // private final ScrapeReactionsByTwitter scrapeReactionsByTwitter;
@@ -41,7 +41,7 @@ public class SiteScraping {
                 scrapeNewsByCloudWatchImpress,
                 scrapeNewsByHatena,
                 scrapeNewsByZenn,
-                scrapeNewsBySrad,
+                // scrapeNewsBySrad,
                 // scrapeGigazine,
                 scrapeNewsByZDNet);
         List<News> newsList = new ArrayList<>();
