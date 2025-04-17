@@ -37,12 +37,9 @@ public class SiteScraping {
 
     public List<News> scrapeNews() {
         List<ScrapingNews> targets = List.of(
-                scrapeNewsByAtMarkIt,
                 scrapeNewsByCloudWatchImpress,
                 scrapeNewsByHatena,
                 scrapeNewsByZenn,
-                // scrapeNewsBySrad,
-                // scrapeGigazine,
                 scrapeNewsByZDNet);
         List<News> newsList = new ArrayList<>();
         for (ScrapingNews target : targets) {

@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @SuperBuilder
 public abstract class ScrapingNews {
     private final SummarizeNews summarizeNews;
-    private final int MAX_NEWS = 10;
+    private final int MAX_NEWS = 15;
 
     public abstract String getSourceBy();
 

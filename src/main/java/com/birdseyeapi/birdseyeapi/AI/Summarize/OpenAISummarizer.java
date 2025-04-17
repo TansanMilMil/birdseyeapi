@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OpenAISummarizer implements AISummarizer {
     private static final String OpenAIEndpoint = System.getenv("OPENAI_CHAT_ENDPOINT");
     private static final String OpenAIAPIKey = System.getenv("OPENAI_API_KEY");
-    private static final String OpenAIModel = "gpt-3.5-turbo";
+    private static final String OpenAIModel = "gpt-4.1-mini";
     private static final int MaxPromptTextLength = 3000;
     private final HttpClient httpClient;
     private final ObjectMapper mapper = new ObjectMapper();
@@ -38,13 +38,14 @@ public class OpenAISummarizer implements AISummarizer {
     @Override
     public String summarize(String text) throws IOException, InterruptedException {
         List<APIChatMessage> messages = new ArrayList<>();
-        // There is 4097 tokens limit when using gpt-3.5-turbo, thus a prompt must be short.
+        // There is 4097 tokens limit when using gpt-3.5-turbo, thus a prompt must be
+        // short.
         String prompt = String.format("""
-            次の文章を日本語で要約してください。
-            なお、要約結果の文章は200文字以内に収まるように調整してください。
-            ---
-            %s
-        """, text);
+                    次の文章を日本語で要約してください。
+                    なお、要約結果の文章は200文字以内に収まるように調整してください。
+                    ---
+                    %s
+                """, text);
         if (prompt.length() > MaxPromptTextLength) {
             prompt = prompt.substring(0, MaxPromptTextLength);
         }
@@ -52,19 +53,19 @@ public class OpenAISummarizer implements AISummarizer {
         APIChatRequest reqBody = new APIChatRequest(OpenAIModel, messages);
 
         final HttpRequest req = HttpRequest
-            .newBuilder(URI.create(OpenAIEndpoint))
-            .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + OpenAIAPIKey)
-            .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reqBody)))
-            .build();
+                .newBuilder(URI.create(OpenAIEndpoint))
+                .setHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + OpenAIAPIKey)
+                .POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(reqBody)))
+                .build();
 
         log.info("textBeforeSummarizedLength: " + text.length());
-        
+
         final HttpResponse<String> res = httpClient.send(req, BodyHandlers.ofString());
         String resBody = res.body();
 
         final APIChatResponse result = mapper.readValue(resBody, APIChatResponse.class);
         return result.getChoices().get(0).getMessage().getContent();
     }
-    
+
 }
